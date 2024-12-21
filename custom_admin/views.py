@@ -1,15 +1,16 @@
 from drf_yasg.utils import swagger_auto_schema
+from requests import Response
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
 from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
 
 from authentication.models import CustomUser
 from authentication.permissions import IsAdmin
-from event.models import CompetitionType
-from event.serializers import CompetitionTypeSerializer
+from event.models import CompetitionType, Event
+from event.serializers import CompetitionTypeSerializer, UpdateEventStatusSerializer
 from swagger.custom_admin import SwaggerDocs
 from user.models import UserDistanceRegistration
-from utils.custom_exceptions import ForbiddenError, NotFoundError, SuccessResponse
+from utils.custom_exceptions import BadRequestError, ForbiddenError, NotFoundError, SuccessResponse
 
 from .models import OrganizerRequest
 
@@ -89,3 +90,24 @@ class CompetitionsTypeViewSet(ModelViewSet):
         if self.action in ['list', 'retrieve']:
             return [IsAuthenticatedOrReadOnly()]
         return [IsAdmin()]
+
+class UpdateEventStatusView(APIView):
+    permission_classes = [IsAuthenticated, IsAdmin]
+
+    @swagger_auto_schema(**SwaggerDocs.UpdateEventStatusView.post)
+    def post(self, request, event_id):  # noqa
+        serializer = UpdateEventStatusSerializer(data=request.data)
+
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=400)
+
+        event_status = serializer.validated_data.get('status')
+        event = Event.objects.filter(id=event_id).first()
+
+        if not event:
+            return BadRequestError('Event not found.').get_response()
+
+        event.status = event_status
+        event.save()
+
+        return SuccessResponse(f'Event status updated to {event_status}.').get_response()

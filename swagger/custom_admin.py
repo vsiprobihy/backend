@@ -1,6 +1,6 @@
 from drf_yasg import openapi
 
-from event.serializers import CompetitionTypeSerializer
+from event.serializers import CompetitionTypeSerializer, UpdateEventStatusSerializer
 
 
 class SwaggerDocs:
@@ -339,4 +339,16 @@ class SwaggerDocs:
                     required=['detail'],
                 ),
             },
+        }
+
+    class UpdateEventStatusView:
+        post = {
+            'tags': ['Event'],
+            'request_body': UpdateEventStatusSerializer,
+            'responses': {
+                200: 'Event status updated successfully',
+                400: 'Bad Request',
+                403: 'Forbidden',
+            },
+            'operation_description': 'Update event status by ID.',
         }

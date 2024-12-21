@@ -66,22 +66,10 @@ class SwaggerDocs:
         }
 
         delete = {
-            'tags': ['Event'],
+            'tags': ['Approve Event'],
             'responses': {
                 204: 'Event deleted successfully',
                 404: 'Event not found',
             },
             'operation_description': 'Delete an event by ID.',
-        }
-
-    class UpdateEventStatusView:
-        post = {
-            'tags': ['Event'],
-            'request_body': UpdateEventStatusSerializer,
-            'responses': {
-                200: 'Event status updated successfully',
-                400: 'Bad Request',
-                403: 'Forbidden',
-            },
-            'operation_description': 'Update event status by ID.',
         }
