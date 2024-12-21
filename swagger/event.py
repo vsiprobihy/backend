@@ -66,7 +66,7 @@ class SwaggerDocs:
         }
 
         delete = {
-            'tags': ['Approve Event'],
+            'tags': ['Event'],
             'responses': {
                 204: 'Event deleted successfully',
                 404: 'Event not found',

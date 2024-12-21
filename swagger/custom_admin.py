@@ -294,56 +294,9 @@ class SwaggerDocs:
             },
         }
 
-    class ApproveDistanceRegistrationView:
-        post = {
-            'tags': ['Approve Distance Registration'],
-            'operation_description': 'Approve Distance Registration',
-            'responses': {
-                200: 'Registration approved successfully.',
-                401: openapi.Schema(
-                    type=openapi.TYPE_OBJECT,
-                    properties={
-                        'detail': openapi.Schema(
-                            type=openapi.TYPE_STRING, description='Authentication credentials were not provided.'
-                        )
-                    },
-                    required=['detail'],
-                ),
-                403: openapi.Schema(
-                    type=openapi.TYPE_OBJECT,
-                    properties={
-                        'detail': openapi.Schema(
-                            type=openapi.TYPE_STRING,
-                            description='You do not have permission to perform this action.',
-                        )
-                    },
-                    required=['detail'],
-                ),
-                404: openapi.Schema(
-                    type=openapi.TYPE_OBJECT,
-                    properties={
-                        'detail': openapi.Schema(
-                            type=openapi.TYPE_STRING, description='Registration not found or already confirmed.'
-                        )
-                    },
-                    required=['detail'],
-                ),
-                500: openapi.Schema(
-                    type=openapi.TYPE_OBJECT,
-                    properties={
-                        'detail': openapi.Schema(
-                            type=openapi.TYPE_STRING,
-                            description='An unexpected error occurred on the server.',
-                        )
-                    },
-                    required=['detail'],
-                ),
-            },
-        }
-
     class UpdateEventStatusView:
         post = {
-            'tags': ['Event'],
+            'tags': ['Approve Event'],
             'request_body': UpdateEventStatusSerializer,
             'responses': {
                 200: 'Event status updated successfully',

@@ -9,26 +9,9 @@ from authentication.permissions import IsAdmin
 from event.models import CompetitionType, Event
 from event.serializers import CompetitionTypeSerializer, UpdateEventStatusSerializer
 from swagger.custom_admin import SwaggerDocs
-from user.models import UserDistanceRegistration
 from utils.custom_exceptions import BadRequestError, ForbiddenError, NotFoundError, SuccessResponse
 
 from .models import OrganizerRequest
-
-
-class ApproveDistanceRegistrationView(APIView):
-    permission_classes = [IsAuthenticated, IsAdmin]
-
-    @swagger_auto_schema(**SwaggerDocs.ApproveDistanceRegistrationView.post)
-    def post(self, request, registration_id):  # noqa
-        registration = UserDistanceRegistration.objects.filter(id=registration_id, isConfirmed=False).first()
-
-        if not registration:
-            return NotFoundError('Registration not found or already confirmed.').get_response()
-
-        registration.isConfirmed = True
-        registration.save()
-
-        return SuccessResponse('Registration approved successfully.').get_response()
 
 
 class ApproveOrganizerView(APIView):
