@@ -13,12 +13,12 @@ urlpatterns = [
     path('<int:user_id>/request-organizer/', RequestOrganizerView.as_view(), name='request-organizer'),
     path('distance/<int:distance_id>/register/', UserDistanceRegistrationView.as_view(), name='register-distance'),
     path(
-        'profile/additional_profiles/',
+        'profile/additional-profiles/',
         AdditionalProfileListView.as_view(),
         name='additional_profiles_list',
     ),
     path(
-        'profile/additional_profiles/<int:id>/',
+        'profile/additional-profiles/<int:id>/',
         AdditionalProfileDetailView.as_view(),
         name='additional_profile_detail',
     ),
