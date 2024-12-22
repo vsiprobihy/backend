@@ -1,6 +1,6 @@
 from drf_yasg import openapi
 
-from event.serializers import CompetitionTypeSerializer, UpdateEventStatusSerializer
+from event.serializers import CompetitionTypeSerializer
 
 
 class SwaggerDocs:
@@ -247,6 +247,7 @@ class SwaggerDocs:
             },
         }
 
+
     class ApproveOrganizerView:
         post = {
             'tags': ['Approve Organizer'],
@@ -358,11 +359,123 @@ class SwaggerDocs:
     class UpdateEventStatusView:
         post = {
             'tags': ['Approve Event'],
-            'request_body': UpdateEventStatusSerializer,
+            'request_body': openapi.Schema(
+                type=openapi.TYPE_OBJECT,
+                properties={
+                    'status': openapi.Schema(
+                        type=openapi.TYPE_STRING,
+                        description='New status of the event (e.g., pending, published, unpublished)',
+                        enum=['pending', 'published', 'unpublished'],
+                    ),
+                },
+                required=['status'],
+            ),
+            'operation_description': 'Update the status of an event by its ID.',
             'responses': {
-                200: 'Event status updated successfully',
-                400: 'Bad Request',
-                403: 'Forbidden',
+                200: openapi.Schema(
+                    type=openapi.TYPE_OBJECT,
+                    properties={
+                        'message': openapi.Schema(
+                            type=openapi.TYPE_STRING,
+                            description='Confirmation message that the event status was successfully updated.'
+                        ),
+                    },
+                    required=['message'],
+                ),
+                400: openapi.Schema(
+                    type=openapi.TYPE_OBJECT,
+                    properties={
+                        'detail': openapi.Schema(
+                            type=openapi.TYPE_STRING,
+                            description='Error message indicating why the request was invalid.'
+                        )
+                    },
+                    required=['detail'],
+                ),
+                403: openapi.Schema(
+                    type=openapi.TYPE_OBJECT,
+                    properties={
+                        'detail': openapi.Schema(
+                            type=openapi.TYPE_STRING,
+                            description='Error message indicating insufficient permissions.'
+                        )
+                    },
+                    required=['detail'],
+                ),
             },
-            'operation_description': 'Update event status by ID.',
+        }
+
+
+    class PendingEventsView:
+        get = {
+            'tags': ['Approve Event'],
+            'operation_description': 'Retrieve all events with status "pending".',
+            'responses': {
+                200: openapi.Schema(
+                    type=openapi.TYPE_ARRAY,
+                    items=openapi.Items(
+                        type=openapi.TYPE_OBJECT,
+                        properties={
+                            'id': openapi.Schema(
+                                type=openapi.TYPE_INTEGER, description='ID of the event'
+                            ),
+                            'name': openapi.Schema(
+                                type=openapi.TYPE_STRING, description='Name of the event'
+                            ),
+                            'organizer': openapi.Schema(
+                                type=openapi.TYPE_STRING, description='Organizer of the event'
+                            ),
+                            'competitionType': openapi.Schema(
+                                type=openapi.TYPE_ARRAY,
+                                items=openapi.Items(type=openapi.TYPE_STRING),
+                                description='Types of competitions associated with the event'
+                            ),
+                            'dateFrom': openapi.Schema(
+                                type=openapi.TYPE_STRING,
+                                format=openapi.FORMAT_DATE,
+                                description='Start date of the event'
+                            ),
+                            'dateTo': openapi.Schema(
+                                type=openapi.TYPE_STRING,
+                                format=openapi.FORMAT_DATE,
+                                description='End date of the event'
+                            ),
+                            'status': openapi.Schema(
+                                type=openapi.TYPE_STRING, description='Status of the event'
+                            ),
+                        },
+                        required=['id', 'name', 'organizer', 'competitionType', 'dateFrom', 'dateTo', 'status']
+                    ),
+                ),
+                401: openapi.Schema(
+                    type=openapi.TYPE_OBJECT,
+                    properties={
+                        'detail': openapi.Schema(
+                            type=openapi.TYPE_STRING,
+                            description='Authentication credentials were not provided.'
+                        )
+                    },
+                    required=['detail'],
+                ),
+                403: openapi.Schema(
+                    type=openapi.TYPE_OBJECT,
+                    properties={
+                        'detail': openapi.Schema(
+                            type=openapi.TYPE_STRING,
+                            description='You do not have permission to perform this action.'
+                        )
+                    },
+                    required=['detail'],
+                ),
+                500: openapi.Schema(
+                    type=openapi.TYPE_OBJECT,
+                    properties={
+                        'detail': openapi.Schema(
+                            type=openapi.TYPE_STRING,
+                            description='An unexpected error occurred on the server.'
+                        )
+                    },
+                    required=['detail'],
+                ),
+            },
         }

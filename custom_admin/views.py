@@ -8,10 +8,11 @@ from rest_framework.viewsets import ModelViewSet
 from authentication.models import CustomUser
 from authentication.permissions import IsAdmin
 from custom_admin.models import OrganizerRequest
-from custom_admin.serializers import OrganizerRequestSerializer
+from custom_admin.serializers import OrganizerRequestSerializer, RequestStatusEventSerializer
 from event.models import CompetitionType, Event
 from event.serializers import CompetitionTypeSerializer, UpdateEventStatusSerializer
 from swagger.custom_admin import SwaggerDocs
+from utils.constants.constants_event import STATUS_PENDING
 from utils.custom_exceptions import BadRequestError, ForbiddenError, NotFoundError, SuccessResponse
 
 
@@ -110,3 +111,13 @@ class UpdateEventStatusView(APIView):
         event.save()
 
         return SuccessResponse(f'Event status updated to {event_status}.').get_response()
+
+
+class PendingEventsView(APIView):
+    permission_classes = [IsAuthenticated, IsAdmin]
+
+    @swagger_auto_schema(**SwaggerDocs.PendingEventsView.get)
+    def get(self, request):
+        events = Event.objects.filter(status=STATUS_PENDING)
+        serializer = RequestStatusEventSerializer(events, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)

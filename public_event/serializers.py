@@ -15,7 +15,7 @@ class PublicEventSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Event
-        fields = ['name', 'organizer', 'competitionType', 'dateFrom', 'dateTo',
+        fields = ['id','name', 'organizer', 'competitionType', 'dateFrom', 'dateTo',
                   'placeRegion', 'place', 'photos', 'distances']
         ref_name = 'EventSerializer'
 
