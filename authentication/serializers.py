@@ -1,6 +1,9 @@
+import re
+
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.files.storage import default_storage
+from django.forms import ValidationError
 from rest_framework import serializers
 
 from authentication.models import AdditionalProfile, CustomUser
@@ -45,14 +48,14 @@ class RegisterSerializer(serializers.ModelSerializer):
         - 1 special character
         - 1 number
         """
-        # if not re.search(r'[A-Z]', value):
-        #     raise ValidationError('Password must contain at least 1 uppercase letter.')
-        #
-        # if not re.search(r'[!@#$%^&*(),.?":{}|<>]', value):
-        #     raise ValidationError('Password must contain at least 1 special character.')
-        #
-        # if not re.search(r'\d', value):
-        #     raise ValidationError('Password must contain at least 1 number.')
+        if not re.search(r'[A-Z]', value):
+            raise ValidationError('Password must contain at least 1 uppercase letter.')
+
+        if not re.search(r'[!@#$%^&*(),.?":{}|<>]', value):
+            raise ValidationError('Password must contain at least 1 special character.')
+
+        if not re.search(r'\d', value):
+            raise ValidationError('Password must contain at least 1 number.')
 
         return value
 
