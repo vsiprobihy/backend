@@ -51,5 +51,4 @@ jobs:
             docker image prune -a -f
 
 
-            docker-compose -f /home/ubuntu/vsiprobihy/backend/docker-compose.yml up -d --remove-orphans
-            docker-compose -f /home/ubuntu/vsiprobihy/backend/docker-compose.yml logs -f
+            docker-compose -f /home/ubuntu/vsiprobihy/backend/docker-compose.yml up -d
