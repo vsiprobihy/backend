@@ -49,7 +49,10 @@ jobs:
             docker ps -a
             docker images
             docker image prune -a -f
-            docker-compose down -v
+
+            docker stop probihy_db_container || true
+            docker rm probihy_db_container || true
+            docker volume rm backend-6_app_db || true
 
             docker-compose -f /home/ubuntu/vsiprobihy/backend/docker-compose.yml up -d --remove-orphans
             docker-compose -f /home/ubuntu/vsiprobihy/backend/docker-compose.yml logs -f
