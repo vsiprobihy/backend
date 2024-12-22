@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import PromoCode
+from event.promo_code.models import PromoCode
 
 
 class PromoCodeSerializer(serializers.ModelSerializer):

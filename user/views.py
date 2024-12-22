@@ -17,8 +17,8 @@ from swagger.user import SwaggerDocs
 from utils.constants.constants_event import STATUS_PENDING, STATUS_UNPUBLISHED
 from utils.custom_exceptions import BadRequestError, CreatedResponse, ForbiddenError, NotFoundError
 
-from .models import EventLike, UserDistanceRegistration
-from .serializer import UserDistanceRegistrationSerializer
+from user.models import EventLike, UserDistanceRegistration
+from user.serializer import UserDistanceRegistrationSerializer
 
 
 class UserDistanceRegistrationView(APIView):

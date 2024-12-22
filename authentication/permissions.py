@@ -1,6 +1,6 @@
 from rest_framework.permissions import BasePermission
 
-from .models import CustomUser
+from authentication.models import CustomUser
 
 
 class IsAdmin(BasePermission):

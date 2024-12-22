@@ -7,13 +7,12 @@ from rest_framework.viewsets import ModelViewSet
 
 from authentication.models import CustomUser
 from authentication.permissions import IsAdmin
+from custom_admin.models import OrganizerRequest
 from custom_admin.serializers import OrganizerRequestSerializer
 from event.models import CompetitionType, Event
 from event.serializers import CompetitionTypeSerializer, UpdateEventStatusSerializer
 from swagger.custom_admin import SwaggerDocs
 from utils.custom_exceptions import BadRequestError, ForbiddenError, NotFoundError, SuccessResponse
-
-from .models import OrganizerRequest
 
 
 class ApproveOrganizerView(APIView):

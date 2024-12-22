@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import AgeCategory
+from event.age_category.models import AgeCategory
 
 
 class AgeCategorySerializer(serializers.ModelSerializer):

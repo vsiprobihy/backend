@@ -1,7 +1,12 @@
 from django.urls import include, path
 from rest_framework.routers import DefaultRouter
 
-from .views import ApproveOrganizerView, CompetitionsTypeViewSet, OrganizerRequestsListView, UpdateEventStatusView
+from custom_admin.views import (
+    ApproveOrganizerView,
+    CompetitionsTypeViewSet,
+    OrganizerRequestsListView,
+    UpdateEventStatusView,
+)
 
 
 router = DefaultRouter()
