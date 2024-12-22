@@ -538,18 +538,29 @@ class SwaggerDocs:
                 200: openapi.Schema(
                     type=openapi.TYPE_OBJECT,
                     properties={
-                        'message': openapi.Schema(
+                        'detail': openapi.Schema(
                             type=openapi.TYPE_STRING, description='Event liked successfully.'
                         )
                     },
+                    required=['detail'],
                 ),
                 404: openapi.Schema(
                     type=openapi.TYPE_OBJECT,
                     properties={
-                        'error': openapi.Schema(
+                        'detail': openapi.Schema(
                             type=openapi.TYPE_STRING, description='Event not found.'
                         )
                     },
+                    required=['detail'],
+                ),
+                403: openapi.Schema(
+                    type=openapi.TYPE_OBJECT,
+                    properties={
+                        'detail': openapi.Schema(
+                            type=openapi.TYPE_STRING, description='Event is not available for liking.'
+                        )
+                    },
+                    required=['detail'],
                 ),
             },
         }

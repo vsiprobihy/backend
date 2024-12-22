@@ -14,6 +14,7 @@ from custom_admin.models import OrganizerRequest
 from event.distance_details.models import DistanceEvent
 from event.models import Event
 from swagger.user import SwaggerDocs
+from utils.constants.constants_event import STATUS_PENDING, STATUS_UNPUBLISHED
 from utils.custom_exceptions import BadRequestError, CreatedResponse, ForbiddenError, NotFoundError
 
 from .models import EventLike, UserDistanceRegistration
@@ -143,19 +144,24 @@ class LikeEventView(APIView):
     def post(self, request, event_id):
         try:
             event = Event.objects.get(id=event_id)
+            if event.status in [STATUS_PENDING, STATUS_UNPUBLISHED]:
+                return Response(
+                    {'detail': 'Event is not available for liking.'},
+                    status=status.HTTP_403_FORBIDDEN,
+                )
             EventLike.objects.like_event(request.user, event)
-            return Response({'message': 'Event liked successfully'}, status=status.HTTP_200_OK)
+            return Response({'detail': 'Event liked successfully'}, status=status.HTTP_200_OK)
         except Event.DoesNotExist:
-            return Response({'error': 'Event not found'}, status=status.HTTP_404_NOT_FOUND)
+            return Response({'detail': 'Event not found'}, status=status.HTTP_404_NOT_FOUND)
 
     @swagger_auto_schema(**SwaggerDocs.LikeEventView.delete)
     def delete(self, request, event_id):
         try:
             event = Event.objects.get(id=event_id)
             EventLike.objects.unlike_event(request.user, event)
-            return Response({'message': 'Event unliked successfully'}, status=status.HTTP_200_OK)
+            return Response({'detail': 'Event unliked successfully'}, status=status.HTTP_200_OK)
         except Event.DoesNotExist:
-            return Response({'error': 'Event not found'}, status=status.HTTP_404_NOT_FOUND)
+            return Response({'detail': 'Event not found'}, status=status.HTTP_404_NOT_FOUND)
 
 
 class LikedEventsView(APIView):
