@@ -1,11 +1,13 @@
 from drf_yasg.utils import swagger_auto_schema
-from requests import Response
+from rest_framework import status
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
+from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
 
 from authentication.models import CustomUser
 from authentication.permissions import IsAdmin
+from custom_admin.serializers import OrganizerRequestSerializer
 from event.models import CompetitionType, Event
 from event.serializers import CompetitionTypeSerializer, UpdateEventStatusSerializer
 from swagger.custom_admin import SwaggerDocs
@@ -18,7 +20,7 @@ class ApproveOrganizerView(APIView):
     permission_classes = [IsAuthenticated, IsAdmin]
 
     @swagger_auto_schema(**SwaggerDocs.ApproveOrganizerView.post)
-    def post(self, request, user_id):  # noqa
+    def post(self, request, user_id):
         if not request.user.is_superuser:
             return ForbiddenError('You do not have permission to perform this action.').get_response()
 
@@ -34,6 +36,21 @@ class ApproveOrganizerView(APIView):
         user.save()
 
         return SuccessResponse('Request approved and user is now an organizer.').get_response()
+
+
+class OrganizerRequestsListView(APIView):
+    permission_classes = [IsAuthenticated, IsAdmin]
+
+    @swagger_auto_schema(**SwaggerDocs.OrganizerRequestsListView.get)
+    def get(self, request):
+        if not request.user.is_superuser:
+            return ForbiddenError('You do not have permission to perform this action.').get_response()
+
+        organizer_requests = OrganizerRequest.objects.filter(isApproved=False)
+        serializer = OrganizerRequestSerializer(organizer_requests, many=True)
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
 
 
 class CompetitionsTypeViewSet(ModelViewSet):
@@ -78,7 +95,7 @@ class UpdateEventStatusView(APIView):
     permission_classes = [IsAuthenticated, IsAdmin]
 
     @swagger_auto_schema(**SwaggerDocs.UpdateEventStatusView.post)
-    def post(self, request, event_id):  # noqa
+    def post(self, request, event_id):
         serializer = UpdateEventStatusSerializer(data=request.data)
 
         if not serializer.is_valid():
