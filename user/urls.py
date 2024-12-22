@@ -26,5 +26,5 @@ urlpatterns = [
     ),
     path('profile/', UserProfileView.as_view(), name='user_profile'),
     path('events/<int:event_id>/like/', LikeEventView.as_view(), name='like-event'),
-    path('events/liked/', LikedEventsView.as_view(), name='liked-events'),
+    path('profile/events/liked/', LikedEventsView.as_view(), name='liked-events'),
 ]
