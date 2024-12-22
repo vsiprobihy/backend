@@ -12,10 +12,11 @@ from authentication.serializers import (
 )
 from custom_admin.models import OrganizerRequest
 from event.distance_details.models import DistanceEvent
+from event.models import Event
 from swagger.user import SwaggerDocs
 from utils.custom_exceptions import BadRequestError, CreatedResponse, ForbiddenError, NotFoundError
 
-from .models import UserDistanceRegistration
+from .models import EventLike, UserDistanceRegistration
 from .serializer import UserDistanceRegistrationSerializer
 
 
@@ -42,11 +43,8 @@ class RequestOrganizerView(APIView):
     permission_classes = [IsAuthenticated]
 
     @swagger_auto_schema(**SwaggerDocs.RequestOrganizerView.post)
-    def post(self, request, user_id):  # noqa
-        user = CustomUser.objects.filter(id=user_id).first()
-
-        if not user:
-            return NotFoundError('User not found.').get_response()
+    def post(self, request):
+        user = request.user
 
         if user.role != CustomUser.USER:
             return ForbiddenError('You do not have permission to perform this action.').get_response()
@@ -136,3 +134,35 @@ class UserProfileView(APIView):
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class LikeEventView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, event_id):
+        try:
+            event = Event.objects.get(id=event_id)
+            EventLike.objects.like_event(request.user, event)
+            return Response({'message': 'Event liked successfully'}, status=status.HTTP_200_OK)
+        except Event.DoesNotExist:
+            return Response({'error': 'Event not found'}, status=status.HTTP_404_NOT_FOUND)
+
+    def delete(self, request, event_id):
+        try:
+            event = Event.objects.get(id=event_id)
+            EventLike.objects.unlike_event(request.user, event)
+            return Response({'message': 'Event unliked successfully'}, status=status.HTTP_200_OK)
+        except Event.DoesNotExist:
+            return Response({'error': 'Event not found'}, status=status.HTTP_404_NOT_FOUND)
+
+
+class LikedEventsView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        liked_events = EventLike.objects.get_liked_events(request.user)
+        data = [
+            {'id': event.id, 'name': event.name, 'dateFrom': event.dateFrom, 'dateTo': event.dateTo}
+            for event in liked_events
+        ]
+        return Response(data, status=status.HTTP_200_OK)
