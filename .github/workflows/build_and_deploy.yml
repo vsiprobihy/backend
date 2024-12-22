@@ -49,6 +49,5 @@ jobs:
             docker ps -a
             docker images
             docker image prune -a -f
-            docker-compose down -v
 
             docker-compose -f /home/ubuntu/vsiprobihy/backend/docker-compose.yml up -d
