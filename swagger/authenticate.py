@@ -1,7 +1,6 @@
 from drf_yasg import openapi
 
 from authentication.serializers import (
-    LoginSerializer,
     RegisterSerializer,
 )
 
@@ -49,7 +48,18 @@ class SwaggerDocs:
         post = {
             'tags': ['Authentication'],
             'operation_description': 'Login with JWT token',
-            'request_body': LoginSerializer,
+            'request_body': openapi.Schema(
+                type=openapi.TYPE_OBJECT,
+                properties={
+                    'email': openapi.Schema(
+                        type=openapi.TYPE_STRING, description='User email address'
+                    ),
+                    'password': openapi.Schema(
+                        type=openapi.TYPE_STRING, description='User password'
+                    ),
+                },
+                required=['email', 'password'],
+            ),
             'responses': {
                 200: openapi.Schema(
                     type=openapi.TYPE_OBJECT,
