@@ -42,7 +42,6 @@ jobs:
             export BACKEND_REPOSITORY=${{ github.repository }}
             export BACKEND_SHA=${{ github.sha }}
 
-            docker-compose down -v
             df -h
             docker container prune -f
             docker image prune -f
