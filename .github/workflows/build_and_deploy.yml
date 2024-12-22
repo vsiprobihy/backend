@@ -43,6 +43,10 @@ jobs:
             export BACKEND_SHA=${{ github.sha }}
 
             df -h
+            docker stop probihy_db_container
+            docker rm probihy_db_container
+            docker stop probihy_back_container
+            docker rm probihy_back_container
             docker container prune -f
             docker image prune -f
             docker volume prune -f
