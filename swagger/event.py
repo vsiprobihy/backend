@@ -1,5 +1,6 @@
 from drf_yasg import openapi
 
+from event.serializers import UpdateEventStatusSerializer  # noqa
 from swagger.event_variables import Request, Responce
 
 
