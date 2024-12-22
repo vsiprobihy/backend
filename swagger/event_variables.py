@@ -23,8 +23,12 @@ class Responce:
                     type=openapi.TYPE_ARRAY,
                     items=openapi.Schema(
                         type=openapi.TYPE_OBJECT,
-                        required=['name'],
+                        required=['id','name'],
                         properties={
+                            'id': openapi.Schema(
+                                type=openapi.TYPE_STRING,
+                                description='id of competition type'
+                            ),
                             'name': openapi.Schema(
                                 type=openapi.TYPE_STRING,
                                 description='Type of competition'
@@ -616,11 +620,6 @@ class Request:
                 items=openapi.Schema(
                     type=openapi.TYPE_OBJECT,
                     properties={
-                        'id': openapi.Schema(
-                            type=openapi.TYPE_INTEGER,
-                            description='Id of competition',
-                            default=1,
-                        ),
                         'name': openapi.Schema(
                             type=openapi.TYPE_STRING,
                             description='Type of competition',
