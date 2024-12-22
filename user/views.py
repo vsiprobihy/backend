@@ -139,6 +139,7 @@ class UserProfileView(APIView):
 class LikeEventView(APIView):
     permission_classes = [IsAuthenticated]
 
+    @swagger_auto_schema(**SwaggerDocs.LikeEventView.post)
     def post(self, request, event_id):
         try:
             event = Event.objects.get(id=event_id)
@@ -147,6 +148,7 @@ class LikeEventView(APIView):
         except Event.DoesNotExist:
             return Response({'error': 'Event not found'}, status=status.HTTP_404_NOT_FOUND)
 
+    @swagger_auto_schema(**SwaggerDocs.LikeEventView.delete)
     def delete(self, request, event_id):
         try:
             event = Event.objects.get(id=event_id)
@@ -159,6 +161,7 @@ class LikeEventView(APIView):
 class LikedEventsView(APIView):
     permission_classes = [IsAuthenticated]
 
+    @swagger_auto_schema(**SwaggerDocs.LikedEventsView.get)
     def get(self, request):
         liked_events = EventLike.objects.get_liked_events(request.user)
         data = [

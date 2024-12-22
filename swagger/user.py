@@ -528,3 +528,74 @@ class SwaggerDocs:
             },
             'operation_description': 'Partial update of user profile data',
         }
+
+
+    class LikeEventView:
+        post = {
+            'tags': ['Event Likes'],
+            'operation_description': 'Like an event by its ID',
+            'responses': {
+                200: openapi.Schema(
+                    type=openapi.TYPE_OBJECT,
+                    properties={
+                        'message': openapi.Schema(
+                            type=openapi.TYPE_STRING, description='Event liked successfully.'
+                        )
+                    },
+                ),
+                404: openapi.Schema(
+                    type=openapi.TYPE_OBJECT,
+                    properties={
+                        'error': openapi.Schema(
+                            type=openapi.TYPE_STRING, description='Event not found.'
+                        )
+                    },
+                ),
+            },
+        }
+
+        delete = {
+            'tags': ['Event Likes'],
+            'operation_description': 'Unlike an event by its ID',
+            'responses': {
+                200: openapi.Schema(
+                    type=openapi.TYPE_OBJECT,
+                    properties={
+                        'message': openapi.Schema(
+                            type=openapi.TYPE_STRING, description='Event unliked successfully.'
+                        )
+                    },
+                ),
+                404: openapi.Schema(
+                    type=openapi.TYPE_OBJECT,
+                    properties={
+                        'error': openapi.Schema(
+                            type=openapi.TYPE_STRING, description='Event not found.'
+                        )
+                    },
+                ),
+            },
+        }
+
+    class LikedEventsView:
+        get = {
+            'tags': ['Event Likes'],
+            'operation_description': 'Retrieve a list of liked events',
+            'responses': {
+                200: openapi.Schema(
+                    type=openapi.TYPE_ARRAY,
+                    items=openapi.Schema(
+                        type=openapi.TYPE_OBJECT,
+                        properties={
+                            'id': openapi.Schema(
+                                type=openapi.TYPE_INTEGER, description='Event ID'
+                            ),
+                            'name': openapi.Schema(
+                                type=openapi.TYPE_STRING, description='Event Name'
+                            ),
+                        },
+                    ),
+                    description='List of liked events.',
+                ),
+            },
+        }
