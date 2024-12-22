@@ -38,12 +38,12 @@ class EventsListCreateView(APIView):
 
         if archives:
             events = (Event.objects.filter(organization__id__in=organizer_ids)
-                      .order_by('-date_from')
-                      .filter(date_to__lt=current_date)
+                      .order_by('-dateFrom')
+                      .filter(dateTo__lt=current_date)
                       )
         else:
             events = (Event.objects.filter(organization__id__in=organizer_ids)
-                      .order_by('-date_from')
+                      .order_by('-dateFrom')
                       )
 
         paginator = Pagination()
@@ -101,7 +101,6 @@ class EventDetailView(APIView):
             updated_serializer = EventSerializer(event)
             return Response(updated_serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
 
     @swagger_auto_schema(**SwaggerDocs.EventDetailView.patch)
     @check_organization_access_decorator(extract_for_event_access_directly)

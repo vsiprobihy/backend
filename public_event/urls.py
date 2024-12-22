@@ -1,6 +1,6 @@
 from django.urls import path
 
-from .views import PublicEventDetailView, PublicEventFilterView, PublicEventListView
+from public_event.views import PublicEventDetailView, PublicEventFilterView, PublicEventListView
 
 
 urlpatterns = [
