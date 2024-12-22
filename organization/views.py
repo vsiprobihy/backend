@@ -18,7 +18,7 @@ User = get_user_model()
 class OrganizationListCreateView(APIView):
     permission_classes = [permissions.IsAuthenticated, IsOrganizer]
 
-    @swagger_auto_schema(**SwaggerDocs.Organization.get)
+    @swagger_auto_schema(**SwaggerDocs.Organization.get_list)
     def get(self, request):
         if request.user.is_authenticated:
             organization = Organization.objects.filter(organizerOrganization__user=request.user)
@@ -88,7 +88,7 @@ class OrganizationDetailView(APIView):
 class InviteOrganizerView(APIView):
     permission_classes = [permissions.IsAuthenticated, IsOrganizer]
 
-    @swagger_auto_schema(**SwaggerDocs.Organization.post)
+    @swagger_auto_schema(**SwaggerDocs.Organization.post_invite)
     def post(self, request, organization_id):
         email = request.data.get('email')
         message = request.data.get('message', '')  # noqa: F841
