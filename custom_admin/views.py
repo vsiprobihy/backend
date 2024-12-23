@@ -1,9 +1,8 @@
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import status
-from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework.viewsets import ModelViewSet
 
 from authentication.models import CustomUser
 from authentication.permissions import IsAdmin
@@ -52,45 +51,6 @@ class OrganizerRequestsListView(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-
-class CompetitionsTypeViewSet(ModelViewSet):
-    queryset = CompetitionType.objects.all()
-    serializer_class = CompetitionTypeSerializer
-    permission_classes = [IsAuthenticatedOrReadOnly]
-
-    @swagger_auto_schema(**SwaggerDocs.CompetitionsTypeViewSet.get)
-    def retrieve(self, request, *args, **kwargs):
-        return super().retrieve(request, *args, **kwargs)
-
-    @swagger_auto_schema(**SwaggerDocs.CompetitionsTypeViewSet.get)
-    def list(self, request, *args, **kwargs):
-        return super().list(request, *args, **kwargs)
-
-    @swagger_auto_schema(**SwaggerDocs.CompetitionsTypeViewSet.post)
-    def create(self, request, *args, **kwargs):
-        self.check_permissions(request)
-        return super().create(request, *args, **kwargs)
-
-    @swagger_auto_schema(**SwaggerDocs.CompetitionsTypeViewSet.put)
-    def update(self, request, *args, **kwargs):
-        self.check_permissions(request)
-        return super().update(request, *args, **kwargs)
-
-    @swagger_auto_schema(**SwaggerDocs.CompetitionsTypeViewSet.patch)
-    def partial_update(self, request, *args, **kwargs):
-        self.check_permissions(request)
-        return super().partial_update(request, *args, **kwargs)
-
-    @swagger_auto_schema(**SwaggerDocs.CompetitionsTypeViewSet.delete)
-    def destroy(self, request, *args, **kwargs):
-        self.check_permissions(request)
-        return super().destroy(request, *args, **kwargs)
-
-    def get_permissions(self):
-        if self.action in ['list', 'retrieve']:
-            return [IsAuthenticatedOrReadOnly()]
-        return [IsAdmin()]
-
 class UpdateEventStatusView(APIView):
     permission_classes = [IsAuthenticated, IsAdmin]
 
@@ -99,13 +59,18 @@ class UpdateEventStatusView(APIView):
         serializer = UpdateEventStatusSerializer(data=request.data)
 
         if not serializer.is_valid():
-            return Response(serializer.errors, status=400)
+            return BadRequestError('Status is not a valid choice.').get_response()
 
         event_status = serializer.validated_data.get('status')
         event = Event.objects.filter(id=event_id).first()
 
         if not event:
-            return BadRequestError('Event not found.').get_response()
+            return NotFoundError('Event not found.').get_response()
+
+        if event.status == event_status:
+            return (BadRequestError(
+                f'The event status is already set to {event_status}. No changes were made.')
+                    .get_response())
 
         event.status = event_status
         event.save()
@@ -121,3 +86,73 @@ class PendingEventsView(APIView):
         events = Event.objects.filter(status=STATUS_PENDING)
         serializer = RequestStatusEventSerializer(events, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class CompetitionsTypeListCreateView(APIView):
+    def get_permissions(self):
+        if self.request.method == 'GET':
+            return [IsAuthenticated()]
+        return [IsAdmin()]
+
+    @swagger_auto_schema(**SwaggerDocs.CompetitionsTypeView.get)
+    def get(self, request):
+        competition_types = CompetitionType.objects.all()
+        if not competition_types:
+            return NotFoundError('Competition type not found.').get_response()
+
+        serializer = CompetitionTypeSerializer(competition_types, many=True)
+
+        return Response(serializer.data)
+
+    @swagger_auto_schema(**SwaggerDocs.CompetitionsTypeView.post)
+    def post(self, request):
+        serializer = CompetitionTypeSerializer(data=request.data)
+
+        if not serializer.is_valid():
+            return BadRequestError('Invalid competition type data.').get_response()
+
+        serializer.save()
+        return Response(serializer.data)
+
+
+class CompetitionsTypeDetailView(APIView):
+    def get_permissions(self):
+        if self.request.method == 'GET':
+            return [IsAuthenticated()]
+        return [IsAdmin()]
+
+    @swagger_auto_schema(**SwaggerDocs.CompetitionsTypeView.get)
+    def get(self, request, competition_type_id):
+        competition_type = CompetitionType.objects.filter(id=competition_type_id).first()
+
+        if not competition_type:
+            return NotFoundError('Competition type not found.').get_response()
+
+        serializer = CompetitionTypeSerializer(competition_type)
+        return Response(serializer.data)
+
+    @swagger_auto_schema(**SwaggerDocs.CompetitionsTypeView.put)
+    def put(self, request, competition_type_id):
+        competition_type = CompetitionType.objects.filter(id=competition_type_id).first()
+
+        if not competition_type:
+            return NotFoundError('Competition type not found.').get_response()
+
+        serializer = CompetitionTypeSerializer(competition_type, data=request.data, partial=True)
+
+        if not serializer.is_valid():
+            return BadRequestError('Invalid competition type data.').get_response()
+
+        serializer.save()
+        return Response(serializer.data)
+
+    @swagger_auto_schema(**SwaggerDocs.CompetitionsTypeView.delete)
+    def delete(self, request, competition_type_id):
+        competition_type = CompetitionType.objects.filter(id=competition_type_id).first()
+
+        if not competition_type:
+            return NotFoundError('Competition type not found.').get_response()
+
+        competition_type.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
