@@ -156,6 +156,8 @@ LOGOUT_REDIRECT_URL = '/'
 
 AUTH_USER_MODEL = 'authentication.CustomUser'
 
+
+# For EMAIL DEVELOP
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 # For Gmail
@@ -172,6 +174,8 @@ EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 # EMAIL_USE_TLS = True
 
 DJOSER = {
+    "ACTIVATION_TOKEN_LIFETIME": timedelta(days=2),  # 2 дня для подтверждения email
+    "PASSWORD_RESET_TOKEN_LIFETIME": timedelta(hours=12),  # 12 часов для сброса пароля
     'SEND_ACTIVATION_EMAIL': True,
     'EMAIL': {
         'activation': 'authentication.emails.CustomActivationEmail',

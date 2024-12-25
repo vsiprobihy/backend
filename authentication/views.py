@@ -1,8 +1,8 @@
 from django.conf import settings
 from django.contrib.auth import authenticate
 from django.contrib.auth.tokens import default_token_generator
-from django.utils.encoding import force_str
-from django.utils.http import urlsafe_base64_decode
+from django.utils.encoding import force_str, force_bytes
+from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from djoser.views import UserViewSet
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import status
@@ -10,6 +10,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
 
+from authentication.emails import send_activation_email
 from authentication.models import CustomUser
 from authentication.serializers import (
     LoginSerializer,
@@ -45,7 +46,7 @@ class RegisterView(APIView):
             #         site_name='vsiprobihy',
             #         domain='127.0.0.1:8000'
             #     )
-            #
+
             return SuccessResponse('Verify your account from email').get_response()
         else:
             raise BadRequestError('Failed to create user')
@@ -63,7 +64,7 @@ class LoginView(APIView):
         if user is None:
             raise UnauthorizedError('Invalid credentials')
 
-        if not user.isActive:
+        if not user.is_active:
             raise ForbiddenError('User account is not active')
 
         refresh = RefreshToken.for_user(user)
@@ -94,7 +95,7 @@ class ActivateUserEmailView(APIView):
             return NotFoundError('User does not exist')
 
         if default_token_generator.check_token(user, token):
-            user.isActive = True
+            user.is_active = True
             user.save()
 
             return SuccessResponse('Your account has been activated successfully').get_response()
