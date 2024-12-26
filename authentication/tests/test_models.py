@@ -15,8 +15,8 @@ def test_create_user():
     )
     assert user.email == 'user@example.com'
     assert user.check_password('testpass123')
-    assert user.isActive
-    assert not user.isStaff
+    assert user.is_active
+    assert not user.is_staff
     assert not user.is_superuser
 
 
@@ -37,8 +37,8 @@ def test_create_superuser():
     )
     assert superuser.email == 'admin@example.com'
     assert superuser.check_password('adminpass123')
-    assert superuser.isActive
-    assert superuser.isStaff
+    assert superuser.is_active
+    assert superuser.is_staff
     assert superuser.is_superuser
 
 

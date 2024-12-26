@@ -66,7 +66,7 @@ class RegisterSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         validated_data.pop('password2')
         user = get_user_model().objects.create_user(**validated_data)
-        # user.isActive = False  #ToDO:  повернути на проді
+        # user.is_active = False  #ToDO:  повернути на проді
         user.save()
         return user
 

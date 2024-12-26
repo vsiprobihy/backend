@@ -131,8 +131,8 @@ class Migration(migrations.Migration):
                         max_length=10,
                     ),
                 ),
-                ("isActive", models.BooleanField(default=True)),
-                ("isStaff", models.BooleanField(default=False)),
+                ("is_active", models.BooleanField(default=True)),
+                ("is_staff", models.BooleanField(default=False)),
                 (
                     "groups",
                     models.ManyToManyField(
