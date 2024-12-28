@@ -33,6 +33,10 @@ class UserDistanceRegistrationView(APIView):
         if not distance:
             return NotFoundError('Distance not found.').get_response()
 
+        event = distance.event
+        if event.status != 'published':
+            return BadRequestError('The event must be published to register.').get_response()
+
         if UserDistanceRegistration.objects.filter(user=user, distance=distance).exists():
             return BadRequestError('You are already registered for this distance.').get_response()
 

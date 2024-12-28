@@ -88,7 +88,12 @@ class SwaggerDocs:
                         description='Gender: M for Male, F for Female',
                         nullable=True,
                     ),
-                    'dateOfBirth': openapi.Schema(type=openapi.FORMAT_DATE, description='Date of birth', nullable=True),
+                    'dateOfBirth': openapi.Schema(
+                        type=openapi.FORMAT_DATE,
+                        description='Date of birth',
+                        nullable=True,
+                        default='2024-12-12'
+                    ),
                     'tShirtSize': openapi.Schema(
                         type=openapi.TYPE_STRING,
                         enum=['XXS', 'XS', 'S', 'M', 'L', 'XL', 'XXL', 'XXXL'],
