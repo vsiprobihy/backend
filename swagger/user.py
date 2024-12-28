@@ -182,6 +182,7 @@ class SwaggerDocs:
                                         'id': openapi.Schema(type=openapi.TYPE_INTEGER, description='Distance ID'),
                                         'name': openapi.Schema(type=openapi.TYPE_STRING, description='Distance name'),
                                     },
+                                    required=['id', 'name'],
                                 ),
                                 'firstName': openapi.Schema(type=openapi.TYPE_STRING, description='First name'),
                                 'lastName': openapi.Schema(type=openapi.TYPE_STRING, description='Last name'),
@@ -197,13 +198,8 @@ class SwaggerDocs:
                                             'id': openapi.Schema(
                                                 type=openapi.TYPE_INTEGER, description='Additional item ID'
                                             ),
-                                            'itemType': openapi.Schema(
-                                                type=openapi.TYPE_STRING, description='Type of additional item'
-                                            ),
-                                            'price': openapi.Schema(
-                                                type=openapi.TYPE_NUMBER, description='Price of additional item'
-                                            ),
                                         },
+                                        required=['id'],
                                     ),
                                     description='List of additional items selected',
                                     nullable=True,
