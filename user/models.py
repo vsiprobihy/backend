@@ -2,6 +2,7 @@ from django.db import models
 from django.utils.timezone import now
 
 from authentication.models import BaseProfile, CustomUser
+from event.additional_items.models import AdditionalItemEvent
 from event.distance_details.models import DistanceEvent
 from event.models import Event
 from event.promo_code.models import PromoCode
@@ -10,10 +11,17 @@ from user.managers import EventLikeManager
 
 class UserDistanceRegistration(models.Model):
     registrationDate = models.DateTimeField(default=now)
-    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='distanceRegistrations')
-    distance = models.ForeignKey(DistanceEvent, on_delete=models.CASCADE, related_name='userRegistrations')
+    user = models.ForeignKey(
+        CustomUser, on_delete=models.CASCADE, related_name='distanceRegistrations'
+    )
+    distance = models.ForeignKey(
+        DistanceEvent, on_delete=models.CASCADE, related_name='userRegistrations'
+    )
     promoCode = models.ForeignKey(
         PromoCode, on_delete=models.SET_NULL, null=True, blank=True, related_name='registrations'
+    )
+    additionalItems = models.ManyToManyField(
+        AdditionalItemEvent, blank=True, related_name='registrations'
     )
 
     firstName = models.CharField(max_length=50)

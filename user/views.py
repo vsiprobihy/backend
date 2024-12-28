@@ -11,6 +11,7 @@ from authentication.serializers import (
     UserProfileSerializer,
 )
 from custom_admin.models import OrganizerRequest
+from event.additional_items.models import AdditionalItemEvent
 from event.distance_details.models import DistanceEvent
 from event.models import Event
 from event.promo_code.models import PromoCode
@@ -23,6 +24,7 @@ from utils.custom_exceptions import BadRequestError, CreatedResponse, ForbiddenE
 
 class UserDistanceRegistrationView(APIView):
     permission_classes = [IsAuthenticated]
+
     @swagger_auto_schema(**SwaggerDocs.UserDistanceRegistrationView.post)
     def post(self, request, distance_id):
         user = request.user
@@ -41,9 +43,16 @@ class UserDistanceRegistrationView(APIView):
             if not promo_code:
                 return BadRequestError('Invalid promo code.').get_response()
 
+        additional_item_ids = request.data.get('additionalItems', [])
+        additional_items = AdditionalItemEvent.objects.filter(id__in=additional_item_ids, distance=distance)
+
+        if len(additional_item_ids) != additional_items.count():
+            return BadRequestError('One or more additional items are invalid.').get_response()
+
         serializer = UserDistanceRegistrationSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save(user=user, distance=distance, promoCode=promo_code)
+            registration = serializer.save(user=user, distance=distance, promoCode=promo_code)
+            registration.additionalItems.set(additional_items)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         else:
             return BadRequestError(serializer.errors).get_response()

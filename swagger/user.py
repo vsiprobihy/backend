@@ -105,6 +105,15 @@ class SwaggerDocs:
                     'emergencyContactPhone': openapi.Schema(
                         type=openapi.TYPE_STRING, description='Emergency contact phone number', nullable=True
                     ),
+                    'promoCode': openapi.Schema(
+                        type=openapi.TYPE_INTEGER, description='Promo code ID', nullable=True
+                    ),
+                    'additionalItems': openapi.Schema(
+                        type=openapi.TYPE_ARRAY,
+                        items=openapi.Items(type=openapi.TYPE_INTEGER),
+                        description='List of additional item IDs',
+                        nullable=True,
+                    ),
                 },
                 required=['firstName', 'lastName'],
             ),
@@ -114,7 +123,7 @@ class SwaggerDocs:
                     type=openapi.TYPE_OBJECT,
                     properties={
                         'detail': openapi.Schema(
-                            type=openapi.TYPE_STRING, description='You are already registered for this distance.'
+                            type=openapi.TYPE_STRING, description='Invalid data or already registred for this distance.'
                         )
                     },
                     required=['detail'],
@@ -132,7 +141,7 @@ class SwaggerDocs:
                     type=openapi.TYPE_OBJECT,
                     properties={
                         'detail': openapi.Schema(
-                            type=openapi.TYPE_STRING, description='Distance not found.'
+                            type=openapi.TYPE_STRING, description='Distance not found or related items are invalid.'
                         )
                     },
                     required=['detail'],
