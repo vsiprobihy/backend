@@ -58,7 +58,7 @@ class UserDistanceRegistrationView(APIView):
             return BadRequestError(serializer.errors).get_response()
 
 
-class UserRegistrationsView(APIView):
+class UserDistanceRegistrationsView(APIView):
     permission_classes = [IsAuthenticated]
 
     @swagger_auto_schema(**SwaggerDocs.UserRegistrationsViewSwagger.get)
