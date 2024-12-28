@@ -12,8 +12,8 @@ class UserDistanceRegistration(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='distanceRegistrations')
     distance = models.ForeignKey(DistanceEvent, on_delete=models.CASCADE, related_name='userRegistrations')
 
-    firstName = models.CharField(max_length=50, default='')
-    lastName = models.CharField(max_length=50, default='')
+    firstName = models.CharField(max_length=50)
+    lastName = models.CharField(max_length=50)
     firstNameEng = models.CharField(max_length=50, null=True, blank=True)
     lastNameEng = models.CharField(max_length=50, null=True, blank=True)
     gender = models.CharField(max_length=10, choices=[('M', 'Male'), ('F', 'Female')], null=True)
@@ -22,7 +22,7 @@ class UserDistanceRegistration(models.Model):
         max_length=5, choices=BaseProfile.T_SHIRT_SIZE_CHOICES, null=True
     )
     country = models.CharField(max_length=100, null=True)
-    email = models.EmailField(null=False, default='')
+    email = models.EmailField(null=False)
     city = models.CharField(max_length=100, null=True)
     phoneNumber = models.CharField(max_length=20, null=True)
     sportsClub = models.CharField(max_length=100, null=True)
