@@ -8,12 +8,14 @@ from user.views import (
     RequestOrganizerView,
     UserDistanceRegistrationView,
     UserProfileView,
+    UserRegistrationsView,
 )
 
 
 urlpatterns = [
     path('request-organizer/', RequestOrganizerView.as_view(), name='request-organizer'),
     path('distance/<int:distance_id>/register/', UserDistanceRegistrationView.as_view(), name='register-distance'),
+    path('distance/registered/', UserRegistrationsView.as_view(), name='user-registrations'),
     path(
         'profile/additional-profiles/',
         AdditionalProfileListView.as_view(),

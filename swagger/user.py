@@ -160,6 +160,82 @@ class SwaggerDocs:
         }
 
 
+    class UserRegistrationsViewSwagger:
+        get = {
+            'tags': ['User Distance Registration'],
+            'operation_description': 'Get all registrations of the authenticated user.',
+            'responses': {
+                200: openapi.Response(
+                    description='List of user registrations',
+                    schema=openapi.Schema(
+                        type=openapi.TYPE_ARRAY,
+                        items=openapi.Schema(
+                            type=openapi.TYPE_OBJECT,
+                            properties={
+                                'id': openapi.Schema(type=openapi.TYPE_INTEGER, description='Registration ID'),
+                                'registrationDate': openapi.Schema(
+                                    type=openapi.FORMAT_DATETIME, description='Date of registration'
+                                ),
+                                'distance': openapi.Schema(
+                                    type=openapi.TYPE_OBJECT,
+                                    properties={
+                                        'id': openapi.Schema(type=openapi.TYPE_INTEGER, description='Distance ID'),
+                                        'name': openapi.Schema(type=openapi.TYPE_STRING, description='Distance name'),
+                                    },
+                                ),
+                                'firstName': openapi.Schema(type=openapi.TYPE_STRING, description='First name'),
+                                'lastName': openapi.Schema(type=openapi.TYPE_STRING, description='Last name'),
+                                'email': openapi.Schema(type=openapi.TYPE_STRING, description='Email'),
+                                'promoCode': openapi.Schema(
+                                    type=openapi.TYPE_STRING, description='Applied promo code', nullable=True
+                                ),
+                                'additionalItems': openapi.Schema(
+                                    type=openapi.TYPE_ARRAY,
+                                    items=openapi.Schema(
+                                        type=openapi.TYPE_OBJECT,
+                                        properties={
+                                            'id': openapi.Schema(
+                                                type=openapi.TYPE_INTEGER, description='Additional item ID'
+                                            ),
+                                            'itemType': openapi.Schema(
+                                                type=openapi.TYPE_STRING, description='Type of additional item'
+                                            ),
+                                            'price': openapi.Schema(
+                                                type=openapi.TYPE_NUMBER, description='Price of additional item'
+                                            ),
+                                        },
+                                    ),
+                                    description='List of additional items selected',
+                                    nullable=True,
+                                ),
+                            },
+                            required=['id', 'registrationDate', 'distance', 'firstName', 'lastName', 'email'],
+                        ),
+                    ),
+                ),
+                401: openapi.Schema(
+                    type=openapi.TYPE_OBJECT,
+                    properties={
+                        'detail': openapi.Schema(
+                            type=openapi.TYPE_STRING, description='Authentication credentials were not provided.'
+                        )
+                    },
+                    required=['detail'],
+                ),
+                500: openapi.Schema(
+                    type=openapi.TYPE_OBJECT,
+                    properties={
+                        'detail': openapi.Schema(
+                            type=openapi.TYPE_STRING,
+                            description='An unexpected error occurred on the server.',
+                        )
+                    },
+                    required=['detail'],
+                ),
+            },
+        }
+
+
     class AdditionalProfileList:
         get = {
             'tags': ['Additional Profile'],

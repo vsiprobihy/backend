@@ -58,6 +58,16 @@ class UserDistanceRegistrationView(APIView):
             return BadRequestError(serializer.errors).get_response()
 
 
+class UserRegistrationsView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    @swagger_auto_schema(**SwaggerDocs.UserRegistrationsViewSwagger.get)
+    def get(self, request):
+        registrations = UserDistanceRegistration.objects.filter(user=request.user)
+        serializer = UserDistanceRegistrationSerializer(registrations, many=True)
+        return Response(serializer.data)
+
+
 class RequestOrganizerView(APIView):
     permission_classes = [IsAuthenticated]
 
