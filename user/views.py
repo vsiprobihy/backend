@@ -13,6 +13,7 @@ from authentication.serializers import (
 from custom_admin.models import OrganizerRequest
 from event.distance_details.models import DistanceEvent
 from event.models import Event
+from event.promo_code.models import PromoCode
 from swagger.user import SwaggerDocs
 from user.models import EventLike, UserDistanceRegistration
 from user.serializer import UserDistanceRegistrationSerializer
@@ -22,9 +23,8 @@ from utils.custom_exceptions import BadRequestError, CreatedResponse, ForbiddenE
 
 class UserDistanceRegistrationView(APIView):
     permission_classes = [IsAuthenticated]
-
     @swagger_auto_schema(**SwaggerDocs.UserDistanceRegistrationView.post)
-    def post(self, request, distance_id):  # noqa
+    def post(self, request, distance_id):
         user = request.user
         distance = DistanceEvent.objects.filter(id=distance_id).first()
 
@@ -34,9 +34,16 @@ class UserDistanceRegistrationView(APIView):
         if UserDistanceRegistration.objects.filter(user=user, distance=distance).exists():
             return BadRequestError('You are already registered for this distance.').get_response()
 
+        promo_code_id = request.data.get('promoCode')
+        promo_code = None
+        if promo_code_id:
+            promo_code = PromoCode.objects.filter(id=promo_code_id, isActive=True, distance=distance).first()
+            if not promo_code:
+                return BadRequestError('Invalid promo code.').get_response()
+
         serializer = UserDistanceRegistrationSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save(user=user, distance=distance)
+            serializer.save(user=user, distance=distance, promoCode=promo_code)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         else:
             return BadRequestError(serializer.errors).get_response()
