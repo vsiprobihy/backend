@@ -14,11 +14,10 @@ from custom_admin.models import OrganizerRequest
 from event.distance_details.models import DistanceEvent
 from event.models import Event
 from swagger.user import SwaggerDocs
-from utils.constants.constants_event import STATUS_PENDING, STATUS_UNPUBLISHED
-from utils.custom_exceptions import BadRequestError, CreatedResponse, ForbiddenError, NotFoundError
-
 from user.models import EventLike, UserDistanceRegistration
 from user.serializer import UserDistanceRegistrationSerializer
+from utils.constants.constants_event import STATUS_PENDING, STATUS_UNPUBLISHED
+from utils.custom_exceptions import BadRequestError, CreatedResponse, ForbiddenError, NotFoundError
 
 
 class UserDistanceRegistrationView(APIView):
@@ -35,9 +34,12 @@ class UserDistanceRegistrationView(APIView):
         if UserDistanceRegistration.objects.filter(user=user, distance=distance).exists():
             return BadRequestError('You are already registered for this distance.').get_response()
 
-        registration = UserDistanceRegistration.objects.create(user=user, distance=distance)
-        serializer = UserDistanceRegistrationSerializer(registration)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        serializer = UserDistanceRegistrationSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save(user=user, distance=distance)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        else:
+            return BadRequestError(serializer.errors).get_response()
 
 
 class RequestOrganizerView(APIView):
