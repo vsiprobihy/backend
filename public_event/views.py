@@ -10,6 +10,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from event.models import CompetitionType, Event
+from event.serializers import EventSerializer
 from public_event.serializers import PublicEventSerializer
 from swagger.public_events import SwaggerDocs
 from utils.constants.constants_event import REGIONS
@@ -47,7 +48,7 @@ class PublicEventDetailView(APIView):
     def get(self, request, event_id):
         try:
             event = Event.objects.get(pk=event_id, status='published')
-            serializer = PublicEventSerializer(event)
+            serializer = EventSerializer(event)
             return Response(serializer.data)
         except Event.DoesNotExist:
             return Response({'detail': 'Event not found.'}, status=404)

@@ -41,7 +41,7 @@ class RegisterSerializer(serializers.ModelSerializer):
         ]
 
     @staticmethod
-    def validate_password(value):   #ToDO:  повернути на проді
+    def validate_password(value):
         """
         Ensure that the password contains at least:
         - 1 uppercase letter
@@ -66,7 +66,7 @@ class RegisterSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         validated_data.pop('password2')
         user = get_user_model().objects.create_user(**validated_data)
-        # user.isActive = False  #ToDO:  повернути на проді
+        user.is_active = False
         user.save()
         return user
 

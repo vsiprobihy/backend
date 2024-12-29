@@ -1,22 +1,21 @@
-from django.urls import include, path
-from rest_framework.routers import DefaultRouter
+from django.urls import path
 
 from custom_admin.views import (
     ApproveOrganizerView,
-    CompetitionsTypeViewSet,
+    CompetitionsTypeDetailView,
+    CompetitionsTypeListCreateView,
     OrganizerRequestsListView,
     PendingEventsView,
     UpdateEventStatusView,
 )
 
 
-router = DefaultRouter()
-router.register(r'competitions-type', CompetitionsTypeViewSet, basename='competitions_type')
-
 urlpatterns = [
-    path('', include(router.urls)),
+    path('competition-type/', CompetitionsTypeListCreateView.as_view(), name='competitions-type-list'),
+    path('competition-type/<int:competition_type_id>/', CompetitionsTypeDetailView.as_view(),
+         name='competition-type-detail'),
     path('user/<int:user_id>/approve-organizer/', ApproveOrganizerView.as_view(), name='approve-organizer'),
+    path('user/approve-organizer/', OrganizerRequestsListView.as_view(), name='organizer-request-list'),
     path('event/<int:event_id>/update-status/', UpdateEventStatusView.as_view(), name='update-event-status'),
-    path('events/update-status-requests/', PendingEventsView.as_view(), name='pending-events'),
-    path('organizer-requests/', OrganizerRequestsListView.as_view(), name='organizer-requests-list'),
+    path('event/update-status/', PendingEventsView.as_view(), name='pending-events'),
 ]

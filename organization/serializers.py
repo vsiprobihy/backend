@@ -1,9 +1,9 @@
-import re
 
 from rest_framework import serializers
 
 from authentication.models import CustomUser
 from organization.models import Organization, Organizer
+from utils.data_validatiors import validate_phone_number
 
 
 class OrganizationSerializer(serializers.ModelSerializer):
@@ -30,13 +30,9 @@ class OrganizationSerializer(serializers.ModelSerializer):
             return request.build_absolute_uri(obj.backgroundImage.url)
         return None
 
-    def validate_phone_numbers(self, value):  # noqa
-        phone_pattern = re.compile(
-            r'^\+380\d{9}$|^\+38\(\d{3}\)\d{7}$|^\+38\(\d{3}\)\d{3}-\d{2}-\d{2}$'
-        )
-        for phone in value:
-            if not phone_pattern.match(phone):
-                raise serializers.ValidationError(f'Invalid phone number: {phone}')
+    def validate_phoneNumbers(self, value):
+        for phone_number in value:
+            validate_phone_number(phone_number)
         return value
 
     def get_users(self, obj):  # noqa

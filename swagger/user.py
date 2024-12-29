@@ -65,17 +65,70 @@ class SwaggerDocs:
             },
         }
 
+
     class UserDistanceRegistrationView:
         post = {
             'tags': ['User Distance Registration'],
             'operation_description': 'User Distance Registration',
+            'request_body': openapi.Schema(
+                type=openapi.TYPE_OBJECT,
+                properties={
+                    'email': openapi.Schema(type=openapi.TYPE_STRING, description='User email'),
+                    'firstName': openapi.Schema(type=openapi.TYPE_STRING, description='User first name'),
+                    'lastName': openapi.Schema(type=openapi.TYPE_STRING, description='User last name'),
+                    'firstNameEng': openapi.Schema(
+                        type=openapi.TYPE_STRING, description='User first name in English', nullable=True
+                    ),
+                    'lastNameEng': openapi.Schema(
+                        type=openapi.TYPE_STRING, description='User last name in English', nullable=True
+                    ),
+                    'gender': openapi.Schema(
+                        type=openapi.TYPE_STRING,
+                        enum=['M', 'F'],
+                        description='Gender: M for Male, F for Female',
+                        nullable=True,
+                    ),
+                    'dateOfBirth': openapi.Schema(
+                        type=openapi.FORMAT_DATE,
+                        description='Date of birth',
+                        nullable=True,
+                        default='2024-12-12'
+                    ),
+                    'tShirtSize': openapi.Schema(
+                        type=openapi.TYPE_STRING,
+                        enum=['XXS', 'XS', 'S', 'M', 'L', 'XL', 'XXL', 'XXXL'],
+                        description='T-shirt size',
+                        nullable=True,
+                    ),
+                    'country': openapi.Schema(type=openapi.TYPE_STRING, description='Country', nullable=True),
+                    'city': openapi.Schema(type=openapi.TYPE_STRING, description='City', nullable=True),
+                    'phoneNumber': openapi.Schema(type=openapi.TYPE_STRING, description='Phone number', nullable=True),
+                    'sportsClub': openapi.Schema(type=openapi.TYPE_STRING, description='Sports club', nullable=True),
+                    'emergencyContactName': openapi.Schema(
+                        type=openapi.TYPE_STRING, description='Emergency contact name', nullable=True
+                    ),
+                    'emergencyContactPhone': openapi.Schema(
+                        type=openapi.TYPE_STRING, description='Emergency contact phone number', nullable=True
+                    ),
+                    'promoCode': openapi.Schema(
+                        type=openapi.TYPE_INTEGER, description='Promo code ID', nullable=True
+                    ),
+                    'additionalItems': openapi.Schema(
+                        type=openapi.TYPE_ARRAY,
+                        items=openapi.Items(type=openapi.TYPE_INTEGER),
+                        description='List of additional item IDs',
+                        nullable=True,
+                    ),
+                },
+                required=['firstName', 'lastName'],
+            ),
             'responses': {
-                200: openapi.Response('Success', UserDistanceRegistrationSerializer),
+                201: openapi.Response('Registration Successful', UserDistanceRegistrationSerializer),
                 400: openapi.Schema(
                     type=openapi.TYPE_OBJECT,
                     properties={
                         'detail': openapi.Schema(
-                            type=openapi.TYPE_STRING, description='You are already registered for this distance.'
+                            type=openapi.TYPE_STRING, description='Invalid data or already registred for this distance.'
                         )
                     },
                     required=['detail'],
@@ -93,7 +146,79 @@ class SwaggerDocs:
                     type=openapi.TYPE_OBJECT,
                     properties={
                         'detail': openapi.Schema(
-                            type=openapi.TYPE_STRING, description='Distance not found.'
+                            type=openapi.TYPE_STRING, description='Distance not found or related items are invalid.'
+                        )
+                    },
+                    required=['detail'],
+                ),
+                500: openapi.Schema(
+                    type=openapi.TYPE_OBJECT,
+                    properties={
+                        'detail': openapi.Schema(
+                            type=openapi.TYPE_STRING,
+                            description='An unexpected error occurred on the server.',
+                        )
+                    },
+                    required=['detail'],
+                ),
+            },
+        }
+
+
+    class UserRegistrationsViewSwagger:
+        get = {
+            'tags': ['User Distance Registration'],
+            'operation_description': 'Get all registrations of the authenticated user.',
+            'responses': {
+                200: openapi.Response(
+                    description='List of user registrations',
+                    schema=openapi.Schema(
+                        type=openapi.TYPE_ARRAY,
+                        items=openapi.Schema(
+                            type=openapi.TYPE_OBJECT,
+                            properties={
+                                'id': openapi.Schema(type=openapi.TYPE_INTEGER, description='Registration ID'),
+                                'registrationDate': openapi.Schema(
+                                    type=openapi.FORMAT_DATETIME, description='Date of registration'
+                                ),
+                                'distance': openapi.Schema(
+                                    type=openapi.TYPE_OBJECT,
+                                    properties={
+                                        'id': openapi.Schema(type=openapi.TYPE_INTEGER, description='Distance ID'),
+                                        'name': openapi.Schema(type=openapi.TYPE_STRING, description='Distance name'),
+                                    },
+                                    required=['id', 'name'],
+                                ),
+                                'firstName': openapi.Schema(type=openapi.TYPE_STRING, description='First name'),
+                                'lastName': openapi.Schema(type=openapi.TYPE_STRING, description='Last name'),
+                                'email': openapi.Schema(type=openapi.TYPE_STRING, description='Email'),
+                                'promoCode': openapi.Schema(
+                                    type=openapi.TYPE_STRING, description='Applied promo code', nullable=True
+                                ),
+                                'additionalItems': openapi.Schema(
+                                    type=openapi.TYPE_ARRAY,
+                                    items=openapi.Schema(
+                                        type=openapi.TYPE_OBJECT,
+                                        properties={
+                                            'id': openapi.Schema(
+                                                type=openapi.TYPE_INTEGER, description='Additional item ID'
+                                            ),
+                                        },
+                                        required=['id'],
+                                    ),
+                                    description='List of additional items selected',
+                                    nullable=True,
+                                ),
+                            },
+                            required=['id', 'registrationDate', 'distance', 'firstName', 'lastName', 'email'],
+                        ),
+                    ),
+                ),
+                401: openapi.Schema(
+                    type=openapi.TYPE_OBJECT,
+                    properties={
+                        'detail': openapi.Schema(
+                            type=openapi.TYPE_STRING, description='Authentication credentials were not provided.'
                         )
                     },
                     required=['detail'],

@@ -4,7 +4,7 @@ from event.serializers import CompetitionTypeSerializer
 
 
 class SwaggerDocs:
-    class CompetitionsTypeViewSet:
+    class CompetitionsTypeView:
         get = {
             'tags': ['Competition Type'],
             'operation_description': 'Get an Competition Type',
@@ -33,7 +33,7 @@ class SwaggerDocs:
                     type=openapi.TYPE_OBJECT,
                     properties={
                         'detail': openapi.Schema(
-                            type=openapi.TYPE_STRING, description='No CompetitionType matches the given query.'
+                            type=openapi.TYPE_STRING, description='Competition type not found.'
                         )
                     },
                     required=['detail'],
@@ -60,7 +60,7 @@ class SwaggerDocs:
                     type=openapi.TYPE_OBJECT,
                     properties={
                         'detail': openapi.Schema(
-                            type=openapi.TYPE_STRING, description='competition type with this name already exists.'
+                            type=openapi.TYPE_STRING, description='Invalid competition type data.'
                         )
                     },
                     required=['detail'],
@@ -80,15 +80,6 @@ class SwaggerDocs:
                         'detail': openapi.Schema(
                             type=openapi.TYPE_STRING,
                             description='You do not have permission to perform this action.',
-                        )
-                    },
-                    required=['detail'],
-                ),
-                404: openapi.Schema(
-                    type=openapi.TYPE_OBJECT,
-                    properties={
-                        'detail': openapi.Schema(
-                            type=openapi.TYPE_STRING, description='No CompetitionType matches the given query.'
                         )
                     },
                     required=['detail'],
@@ -112,6 +103,15 @@ class SwaggerDocs:
             'request_body': CompetitionTypeSerializer,
             'responses': {
                 201: CompetitionTypeSerializer,
+                400: openapi.Schema(
+                    type=openapi.TYPE_OBJECT,
+                    properties={
+                        'detail': openapi.Schema(
+                            type=openapi.TYPE_STRING, description='Invalid competition type data.'
+                        )
+                    },
+                    required=['detail'],
+                ),
                 401: openapi.Schema(
                     type=openapi.TYPE_OBJECT,
                     properties={
@@ -135,7 +135,7 @@ class SwaggerDocs:
                     type=openapi.TYPE_OBJECT,
                     properties={
                         'detail': openapi.Schema(
-                            type=openapi.TYPE_STRING, description='No CompetitionType matches the given query.'
+                            type=openapi.TYPE_STRING, description='Competition type not found.'
                         )
                     },
                     required=['detail'],
@@ -151,54 +151,7 @@ class SwaggerDocs:
                     required=['detail'],
                 ),
             },
-            'operation_description': 'Update Competition Type',
-        }
-
-        patch = {
-            'tags': ['Competition Type'],
-            'request_body': CompetitionTypeSerializer,
-            'responses': {
-                201: CompetitionTypeSerializer,
-                401: openapi.Schema(
-                    type=openapi.TYPE_OBJECT,
-                    properties={
-                        'detail': openapi.Schema(
-                            type=openapi.TYPE_STRING, description='Authentication credentials were not provided.'
-                        )
-                    },
-                    required=['detail'],
-                ),
-                403: openapi.Schema(
-                    type=openapi.TYPE_OBJECT,
-                    properties={
-                        'detail': openapi.Schema(
-                            type=openapi.TYPE_STRING,
-                            description='You do not have permission to perform this action.',
-                        )
-                    },
-                    required=['detail'],
-                ),
-                404: openapi.Schema(
-                    type=openapi.TYPE_OBJECT,
-                    properties={
-                        'detail': openapi.Schema(
-                            type=openapi.TYPE_STRING, description='No CompetitionType matches the given query.'
-                        )
-                    },
-                    required=['detail'],
-                ),
-                500: openapi.Schema(
-                    type=openapi.TYPE_OBJECT,
-                    properties={
-                        'detail': openapi.Schema(
-                            type=openapi.TYPE_STRING,
-                            description='An unexpected error occurred on the server.',
-                        )
-                    },
-                    required=['detail'],
-                ),
-            },
-            'operation_description': 'Partial update Competition Type',
+            'operation_description': 'Create a new Competition Type.',
         }
 
         delete = {
@@ -229,7 +182,7 @@ class SwaggerDocs:
                     type=openapi.TYPE_OBJECT,
                     properties={
                         'detail': openapi.Schema(
-                            type=openapi.TYPE_STRING, description='No CompetitionType matches the given query.'
+                            type=openapi.TYPE_STRING, description='Competition type not found.'
                         )
                     },
                     required=['detail'],
@@ -246,7 +199,6 @@ class SwaggerDocs:
                 ),
             },
         }
-
 
     class ApproveOrganizerView:
         post = {
@@ -294,7 +246,6 @@ class SwaggerDocs:
                 ),
             },
         }
-
 
     class OrganizerRequestsListView:
         get = {
@@ -355,7 +306,6 @@ class SwaggerDocs:
             },
         }
 
-
     class UpdateEventStatusView:
         post = {
             'tags': ['Approve Event'],
@@ -387,7 +337,20 @@ class SwaggerDocs:
                     properties={
                         'detail': openapi.Schema(
                             type=openapi.TYPE_STRING,
-                            description='Error message indicating why the request was invalid.'
+                            description='Error message indicating why the request was invalid.',
+                            enum=[
+                                'Status is not a valid choice.',
+                                'The event status is already set to [status]. No changes were made.',
+                            ]
+                        )
+                    },
+                    required=['detail'],
+                ),
+                401: openapi.Schema(
+                    type=openapi.TYPE_OBJECT,
+                    properties={
+                        'detail': openapi.Schema(
+                            type=openapi.TYPE_STRING, description='Authentication credentials were not provided.'
                         )
                     },
                     required=['detail'],
@@ -397,14 +360,22 @@ class SwaggerDocs:
                     properties={
                         'detail': openapi.Schema(
                             type=openapi.TYPE_STRING,
-                            description='Error message indicating insufficient permissions.'
+                            description='You do not have permission to perform this action.',
+                        )
+                    },
+                    required=['detail'],
+                ),
+                404: openapi.Schema(
+                    type=openapi.TYPE_OBJECT,
+                    properties={
+                        'detail': openapi.Schema(
+                            type=openapi.TYPE_STRING, description='Event not found.'
                         )
                     },
                     required=['detail'],
                 ),
             },
         }
-
 
     class PendingEventsView:
         get = {

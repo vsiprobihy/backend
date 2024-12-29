@@ -6,14 +6,23 @@ from PIL import Image
 
 
 def validate_phone_number(value):
+    print('Validating phone number')
+
     # Check if a string contains only numbers and '+' symbols for the country code
     if not all(char.isdigit() or char == '+' for char in value):
-        raise ValidationError(f"{value} should only contain digits and a '+' sign.")
+        raise ValidationError(f"{value} should only contain digits and a '+' sign at the beginning for country code.")
 
     try:
         parsed_number = phonenumbers.parse(value, None)
+
         if not phonenumbers.is_valid_number(parsed_number):
             raise ValidationError(f'{value} is not a valid phone number.')
+
+        region_code = phonenumbers.region_code_for_number(parsed_number)
+
+        if region_code == 'RU':
+            raise ValidationError(f'{value} is not allowed. Russia is excluded.')
+
     except phonenumbers.NumberParseException:
         raise ValidationError(f'{value} is not a valid phone number format.')
 
