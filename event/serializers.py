@@ -12,6 +12,7 @@ from event.promo_code.models import PromoCode
 from organization.models import Organization, Organizer
 from organization.serializers import OrganizerSerializer
 from utils.constants.constants_event import STATUS_CHOICES
+from utils.custom_exceptions import ConflictError
 
 
 class CompetitionTypeSerializer(serializers.ModelSerializer):
@@ -94,8 +95,11 @@ class EventSerializer(serializers.ModelSerializer):
 
         competitionTypes = []
         for comp in competitionTypeData:
-            competitionType = CompetitionType.objects.get(name=comp['name'])
-            competitionTypes.append(competitionType)
+            try:
+                competitionType = CompetitionType.objects.get(name=comp['name'])
+                competitionTypes.append(competitionType)
+            except CompetitionType.DoesNotExist:
+                raise ConflictError("The competition type does not exist.")
 
         event.competitionType.set(competitionTypes)
 

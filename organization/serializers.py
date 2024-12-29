@@ -30,7 +30,7 @@ class OrganizationSerializer(serializers.ModelSerializer):
             return request.build_absolute_uri(obj.backgroundImage.url)
         return None
 
-    def validate_phone_numbers(self, value):  # noqa
+    def validate_phoneNumbers(self, value):  # noqa
         phone_pattern = re.compile(
             r'^\+380\d{9}$|^\+38\(\d{3}\)\d{7}$|^\+38\(\d{3}\)\d{3}-\d{2}-\d{2}$'
         )

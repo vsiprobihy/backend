@@ -35,17 +35,17 @@ class RegisterView(APIView):
         if serializer.is_valid(raise_exception=True):
             user = serializer.save()  # noqa: F841
 
-            # if user and user.pk is not None:
-            #     uid = urlsafe_base64_encode(force_bytes(user.pk))
-            #     token = default_token_generator.make_token(user)
-            #
-            #     send_activation_email(
-            #         user=user,
-            #         uid=uid,
-            #         token=token,
-            #         site_name='vsiprobihy',
-            #         domain='127.0.0.1:8000'
-            #     )
+            if user and user.pk is not None:
+                uid = urlsafe_base64_encode(force_bytes(user.pk))
+                token = default_token_generator.make_token(user)
+
+                send_activation_email(
+                    user=user,
+                    uid=uid,
+                    token=token,
+                    site_name='vsiprobihy',
+                    domain='127.0.0.1:8000'
+                )
 
             return SuccessResponse('Verify your account from email').get_response()
         else:
