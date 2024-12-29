@@ -158,20 +158,22 @@ AUTH_USER_MODEL = 'authentication.CustomUser'
 
 
 # For EMAIL DEVELOP
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+# EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 # For Gmail
-# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-# EMAIL_ADMIN = os.getenv('GMAIL_ADMIN')
-# EMAIL_SERVER = os.getenv('GMAIL_SERVER')
-# EMAIL_HOST = os.getenv('GMAIL_HOST')
-# EMAIL_PORT = os.getenv('GMAIL_PORT')
-# EMAIL_HOST_USER = os.getenv('GMAIL_HOST_USER')
-# EMAIL_HOST_PASSWORD = os.getenv('GMAIL_HOST_PASSWORD')
-# DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
-# EMAIL_STARTTLS = True
-# EMAIL_USE_SSL = False
-# EMAIL_USE_TLS = True
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_ADMIN = os.getenv('EMAIL_ADMIN')
+EMAIL_SERVER = os.getenv('EMAIL_SERVER')
+EMAIL_HOST = os.getenv('EMAIL_HOST')
+EMAIL_PORT = os.getenv('EMAIL_PORT')
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
+DEFAULT_FROM_EMAIL = EMAIL_ADMIN
+EMAIL_USE_SSL = False
+EMAIL_USE_TLS = True
+
+DOMAIN = os.getenv('DOMAIN', '127.0.0.1:8000')
+PROTOCOL = os.getenv('PROTOCOL', 'http')
 
 DJOSER = {
     "ACTIVATION_TOKEN_LIFETIME": timedelta(days=2),  # 2 дня для подтверждения email

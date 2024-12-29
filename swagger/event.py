@@ -30,7 +30,24 @@ class SwaggerDocs:
             'request_body': Request.EventRequestBodyPost,
             'responses': {
                 201: Responce.EventResponse,
-                400: 'Bad request',
+                400: openapi.Schema(
+                    type=openapi.TYPE_OBJECT,
+                    properties={
+                        'detail': openapi.Schema(
+                            type=openapi.TYPE_STRING, description='Bad request'
+                        )
+                    },
+                    required=['detail'],
+                ),
+                409: openapi.Schema(
+                    type=openapi.TYPE_OBJECT,
+                    properties={
+                        'detail': openapi.Schema(
+                            type=openapi.TYPE_STRING, description='The competition type does not exist.'
+                        )
+                    },
+                    required=['detail'],
+                ),
             },
             'operation_description': 'Create a new event with all related details including organizer, additional items, and distances.',  # noqa: E501
         }
