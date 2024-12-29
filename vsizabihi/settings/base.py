@@ -172,6 +172,9 @@ DEFAULT_FROM_EMAIL = EMAIL_ADMIN
 EMAIL_USE_SSL = False
 EMAIL_USE_TLS = True
 
+DOMAIN = os.getenv('DOMAIN', '127.0.0.1:8000')
+PROTOCOL = os.getenv('PROTOCOL', 'http')
+
 DJOSER = {
     "ACTIVATION_TOKEN_LIFETIME": timedelta(days=2),  # 2 дня для подтверждения email
     "PASSWORD_RESET_TOKEN_LIFETIME": timedelta(hours=12),  # 12 часов для сброса пароля

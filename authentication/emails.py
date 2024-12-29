@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 from djoser.email import (
@@ -26,7 +27,7 @@ def send_activation_email(user, uid, token, site_name, domain, protocol='http'):
 
     context = {
         'site_name': site_name,
-        'protocol': protocol,
+        'protocol': settings.PROTOCOL if settings.PROTOCOL else protocol,
         'domain': domain,
         'uid': uid,
         'token': token,

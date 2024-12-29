@@ -44,7 +44,7 @@ class RegisterView(APIView):
                     uid=uid,
                     token=token,
                     site_name='vsiprobihy',
-                    domain='127.0.0.1:8000'
+                    domain=settings.DOMAIN
                 )
 
             return SuccessResponse('Verify your account from email').get_response()
