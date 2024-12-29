@@ -11,33 +11,65 @@ from authentication.serializers import (
     UserProfileSerializer,
 )
 from custom_admin.models import OrganizerRequest
+from event.additional_items.models import AdditionalItemEvent
 from event.distance_details.models import DistanceEvent
 from event.models import Event
+from event.promo_code.models import PromoCode
 from swagger.user import SwaggerDocs
-from utils.constants.constants_event import STATUS_PENDING, STATUS_UNPUBLISHED
-from utils.custom_exceptions import BadRequestError, CreatedResponse, ForbiddenError, NotFoundError
-
 from user.models import EventLike, UserDistanceRegistration
 from user.serializer import UserDistanceRegistrationSerializer
+from utils.constants.constants_event import STATUS_PENDING, STATUS_UNPUBLISHED
+from utils.custom_exceptions import BadRequestError, CreatedResponse, ForbiddenError, NotFoundError
 
 
 class UserDistanceRegistrationView(APIView):
     permission_classes = [IsAuthenticated]
 
     @swagger_auto_schema(**SwaggerDocs.UserDistanceRegistrationView.post)
-    def post(self, request, distance_id):  # noqa
+    def post(self, request, distance_id):
         user = request.user
         distance = DistanceEvent.objects.filter(id=distance_id).first()
 
         if not distance:
             return NotFoundError('Distance not found.').get_response()
 
+        event = distance.event
+        if event.status != 'published':
+            return BadRequestError('The event must be published to register.').get_response()
+
         if UserDistanceRegistration.objects.filter(user=user, distance=distance).exists():
             return BadRequestError('You are already registered for this distance.').get_response()
 
-        registration = UserDistanceRegistration.objects.create(user=user, distance=distance)
-        serializer = UserDistanceRegistrationSerializer(registration)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        promo_code_id = request.data.get('promoCode')
+        promo_code = None
+        if promo_code_id:
+            promo_code = PromoCode.objects.filter(id=promo_code_id, isActive=True, distance=distance).first()
+            if not promo_code:
+                return BadRequestError('Invalid promo code.').get_response()
+
+        additional_item_ids = request.data.get('additionalItems', [])
+        additional_items = AdditionalItemEvent.objects.filter(id__in=additional_item_ids, distance=distance)
+
+        if len(additional_item_ids) != additional_items.count():
+            return BadRequestError('One or more additional items are invalid.').get_response()
+
+        serializer = UserDistanceRegistrationSerializer(data=request.data)
+        if serializer.is_valid():
+            registration = serializer.save(user=user, distance=distance, promoCode=promo_code)
+            registration.additionalItems.set(additional_items)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        else:
+            return BadRequestError(serializer.errors).get_response()
+
+
+class UserDistanceRegistrationsView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    @swagger_auto_schema(**SwaggerDocs.UserRegistrationsViewSwagger.get)
+    def get(self, request):
+        registrations = UserDistanceRegistration.objects.filter(user=request.user)
+        serializer = UserDistanceRegistrationSerializer(registrations, many=True)
+        return Response(serializer.data)
 
 
 class RequestOrganizerView(APIView):

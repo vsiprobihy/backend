@@ -6,6 +6,7 @@ from user.views import (
     LikedEventsView,
     LikeEventView,
     RequestOrganizerView,
+    UserDistanceRegistrationsView,
     UserDistanceRegistrationView,
     UserProfileView,
 )
@@ -14,17 +15,18 @@ from user.views import (
 urlpatterns = [
     path('request-organizer/', RequestOrganizerView.as_view(), name='request-organizer'),
     path('distance/<int:distance_id>/register/', UserDistanceRegistrationView.as_view(), name='register-distance'),
+    path('distance/register/', UserDistanceRegistrationsView.as_view(), name='user-registrations'),
     path(
-        'profile/additional-profiles/',
+        'profile/additional-profile/',
         AdditionalProfileListView.as_view(),
         name='additional_profiles_list',
     ),
     path(
-        'profile/additional-profiles/<int:id>/',
+        'profile/additional-profile/<int:id>/',
         AdditionalProfileDetailView.as_view(),
         name='additional_profile_detail',
     ),
     path('profile/', UserProfileView.as_view(), name='user_profile'),
     path('event/<int:event_id>/like/', LikeEventView.as_view(), name='like-event'),
-    path('event/liked/', LikedEventsView.as_view(), name='liked-event'),
+    path('event/like/', LikedEventsView.as_view(), name='liked-event'),
 ]
