@@ -6,7 +6,7 @@ from PIL import Image
 
 
 def validate_phone_number(value):
-    print(f'Validating phone number: {value}')
+    print('Validating phone number')
 
     # Check if a string contains only numbers and '+' symbols for the country code
     if not all(char.isdigit() or char == '+' for char in value):
