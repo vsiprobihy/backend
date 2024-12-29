@@ -185,7 +185,7 @@ DJOSER = {
         'password_changed_confirmation': 'authentication.emails.CustomPasswordChangedConfirmationEmail',
     },
 
-    'PASSWORD_RESET_CONFIRM_URL': 'api/authentication/reset_password_confirm/{uid}/{token}/',
+    'PASSWORD_RESET_CONFIRM_URL': 'api/authentication/reset-password-confirm/{uid}/{token}/',
     'ACTIVATION_URL': 'api/authentication/activate/{uid}/{token}/',
 }
 
