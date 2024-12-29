@@ -8,7 +8,7 @@ from PIL import Image
 def validate_phone_number(value):
     print(f"Validating phone number: {value}")
     # Check if a string contains only numbers and '+' symbols for the country code
-    if not (value[0] == '+' and value[1:].isdigit()) and not value.isdigit():
+    if not all(char.isdigit() or char == '+' for char in value):
         raise ValidationError(f"{value} should only contain digits and a '+' sign at the beginning for country code.")
 
     try:
