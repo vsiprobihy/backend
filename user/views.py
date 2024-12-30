@@ -78,7 +78,7 @@ class UserDistanceRegistrationsView(APIView):
             registrations = registrations.filter(distance__event__dateTo__lt=now().date())
 
         paginator = Pagination()
-        paginator.page_size = 3
+        paginator.page_size = 4
 
         paginated_registrations = paginator.paginate_queryset(registrations, request)
 
