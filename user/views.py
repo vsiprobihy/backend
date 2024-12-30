@@ -21,6 +21,7 @@ from user.models import EventLike, UserDistanceRegistration
 from user.serializer import UserDistanceRegistrationSerializer
 from utils.constants.constants_event import STATUS_PENDING, STATUS_UNPUBLISHED
 from utils.custom_exceptions import BadRequestError, CreatedResponse, ForbiddenError, NotFoundError
+from utils.pagination import Pagination
 
 
 class UserDistanceRegistrationView(APIView):
@@ -76,7 +77,17 @@ class UserDistanceRegistrationsView(APIView):
         elif status_filter == 'archive':
             registrations = registrations.filter(distance__event__dateTo__lt=now().date())
 
+        paginator = Pagination()
+        paginator.page_size = 3
+
+        paginated_registrations = paginator.paginate_queryset(registrations, request)
+
+        if paginated_registrations is not None:
+            serializer = UserDistanceRegistrationSerializer(paginated_registrations, many=True)
+            return paginator.get_paginated_response(serializer.data)
+
         serializer = UserDistanceRegistrationSerializer(registrations, many=True)
+
         return Response(serializer.data)
 
 
