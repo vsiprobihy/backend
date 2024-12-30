@@ -1,3 +1,4 @@
+from django.utils.timezone import now
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
@@ -20,6 +21,7 @@ from user.models import EventLike, UserDistanceRegistration
 from user.serializer import UserDistanceRegistrationSerializer
 from utils.constants.constants_event import STATUS_PENDING, STATUS_UNPUBLISHED
 from utils.custom_exceptions import BadRequestError, CreatedResponse, ForbiddenError, NotFoundError
+from utils.pagination import Pagination
 
 
 class UserDistanceRegistrationView(APIView):
@@ -67,8 +69,25 @@ class UserDistanceRegistrationsView(APIView):
 
     @swagger_auto_schema(**SwaggerDocs.UserRegistrationsViewSwagger.get)
     def get(self, request):
+        status_filter = request.query_params.get('status')
         registrations = UserDistanceRegistration.objects.filter(user=request.user)
+
+        if status_filter == 'active':
+            registrations = registrations.filter(distance__event__dateTo__gte=now().date())
+        elif status_filter == 'archive':
+            registrations = registrations.filter(distance__event__dateTo__lt=now().date())
+
+        paginator = Pagination()
+        paginator.page_size = 4
+
+        paginated_registrations = paginator.paginate_queryset(registrations, request)
+
+        if paginated_registrations is not None:
+            serializer = UserDistanceRegistrationSerializer(paginated_registrations, many=True)
+            return paginator.get_paginated_response(serializer.data)
+
         serializer = UserDistanceRegistrationSerializer(registrations, many=True)
+
         return Response(serializer.data)
 
 
@@ -202,8 +221,17 @@ class LikedEventsView(APIView):
     @swagger_auto_schema(**SwaggerDocs.LikedEventsView.get)
     def get(self, request):
         liked_events = EventLike.objects.get_liked_events(request.user)
-        data = [
-            {'id': event.id, 'name': event.name, 'dateFrom': event.dateFrom, 'dateTo': event.dateTo}
-            for event in liked_events
-        ]
+
+        paginator = Pagination()
+        paginator.page_size = 4
+
+        paginated_events = paginator.paginate_queryset(liked_events, request)
+
+        if paginated_events is not None:
+            data = [
+                {'id': event.id, 'name': event.name, 'dateFrom': event.dateFrom, 'dateTo': event.dateTo}
+                for event in paginated_events
+            ]
+            return paginator.get_paginated_response(data)
+
         return Response(data, status=status.HTTP_200_OK)
