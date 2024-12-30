@@ -31,22 +31,22 @@ class BaseProfile(models.Model):
     firstName = models.CharField(max_length=50)
     lastName = models.CharField(max_length=50)
 
-    firstNameEng = models.CharField(max_length=50, null=True, blank=True)
-    lastNameEng = models.CharField(max_length=50, null=True, blank=True)
+    firstNameEng = models.CharField(max_length=50, null=False, blank=False)
+    lastNameEng = models.CharField(max_length=50, null=False, blank=False)
 
-    gender = models.CharField(max_length=10, choices=[('M', 'Male'), ('F', 'Female')], null=True)
-    dateOfBirth = models.DateField(null=True)
+    gender = models.CharField(max_length=10, choices=[('M', 'Male'), ('F', 'Female')], null=False)
+    dateOfBirth = models.DateField(null=False)
     tShirtSize = models.CharField(
         max_length=5, choices=T_SHIRT_SIZE_CHOICES, null=True
     )
 
-    country = models.CharField(max_length=100, default='Unknown', null=True)
-    city = models.CharField(max_length=100, default='Unknown', null=True)
+    country = models.CharField(max_length=100, null=False)
+    city = models.CharField(max_length=100, null=False)
 
     phoneNumber = models.CharField(
         _('phone number'),
         max_length=20,
-        null=True,
+        null=False,
         validators=[validate_phone_number],
     )
 
@@ -58,12 +58,12 @@ class BaseProfile(models.Model):
         validators=[validate_image_file, validate_file_size]
     )
 
-    sportsClub = models.CharField(max_length=100, null=True)
+    sportsClub = models.CharField(max_length=100, null=False)
 
-    emergencyContactName = models.CharField(max_length=100, null=True)
+    emergencyContactName = models.CharField(max_length=100, null=False)
     emergencyContactPhone = models.CharField(
         _('phone number'),
-        null=True,
+        null=False,
         max_length=20,
         validators=[validate_phone_number],
     )
