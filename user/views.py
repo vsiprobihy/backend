@@ -221,8 +221,17 @@ class LikedEventsView(APIView):
     @swagger_auto_schema(**SwaggerDocs.LikedEventsView.get)
     def get(self, request):
         liked_events = EventLike.objects.get_liked_events(request.user)
-        data = [
-            {'id': event.id, 'name': event.name, 'dateFrom': event.dateFrom, 'dateTo': event.dateTo}
-            for event in liked_events
-        ]
+
+        paginator = Pagination()
+        paginator.page_size = 1
+
+        paginated_events = paginator.paginate_queryset(liked_events, request)
+
+        if paginated_events is not None:
+            data = [
+                {'id': event.id, 'name': event.name, 'dateFrom': event.dateFrom, 'dateTo': event.dateTo}
+                for event in paginated_events
+            ]
+            return paginator.get_paginated_response(data)
+
         return Response(data, status=status.HTTP_200_OK)
