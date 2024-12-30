@@ -179,7 +179,10 @@ class SwaggerDocs:
                     openapi.IN_QUERY,
                     description='Filter by status: "active" or "archive".',
                     type=openapi.TYPE_STRING,
-                    enum=['active', 'archive'],  # Возможные значения
+                    enum=['active', 'archive'],
+                ),
+                openapi.Parameter(
+                    'page', openapi.IN_QUERY, description='Page number for pagination', type=openapi.TYPE_STRING
                 ),
             ],
             'responses': {
@@ -737,6 +740,18 @@ class SwaggerDocs:
         get = {
             'tags': ['Event Likes'],
             'operation_description': 'Retrieve a list of liked events',
+            'manual_parameters': [
+                openapi.Parameter(
+                    'status',
+                    openapi.IN_QUERY,
+                    description='Filter by status: "active" or "archive".',
+                    type=openapi.TYPE_STRING,
+                    enum=['active', 'archive'],
+                ),
+                openapi.Parameter(
+                    'page', openapi.IN_QUERY, description='Page number for pagination', type=openapi.TYPE_STRING
+                ),
+            ],
             'responses': {
                 200: openapi.Schema(
                     type=openapi.TYPE_ARRAY,

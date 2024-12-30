@@ -223,7 +223,7 @@ class LikedEventsView(APIView):
         liked_events = EventLike.objects.get_liked_events(request.user)
 
         paginator = Pagination()
-        paginator.page_size = 1
+        paginator.page_size = 4
 
         paginated_events = paginator.paginate_queryset(liked_events, request)
 
