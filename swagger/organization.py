@@ -1,6 +1,7 @@
 from drf_yasg import openapi
 
-from organization.serializers import OrganizationSerializer  # noqa
+from organization.serializers import OrganizationSerializer
+from swagger.organization_variables import Request
 
 
 class SwaggerDocs:
@@ -54,4 +55,15 @@ class SwaggerDocs:
                 404: 'Organizer not found',
             },
             'operation_description': 'Delete an event organizer by event_id. The event_id is used to find and delete the organizer associated with a specific event.',  # noqa: E501
+        }
+
+    class InviteOrganaizer:
+        post = {
+            'tags': ['Organization'],
+            'request_body': Request.ModeratorInviteRequestBody,
+            'responses': {
+                200: 'Invite sent successfully',
+                404: 'Organizer not found',
+            },
+            'operation_description': 'Send an invitation to an organizer by email. The email address of the organizer is provided in the request body.',  # noqa: E501
         }
