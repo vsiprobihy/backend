@@ -1,3 +1,4 @@
+from django.utils.timezone import now
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
@@ -67,7 +68,14 @@ class UserDistanceRegistrationsView(APIView):
 
     @swagger_auto_schema(**SwaggerDocs.UserRegistrationsViewSwagger.get)
     def get(self, request):
+        status_filter = request.query_params.get('status')
         registrations = UserDistanceRegistration.objects.filter(user=request.user)
+
+        if status_filter == 'active':
+            registrations = registrations.filter(distance__event__dateTo__gte=now().date())
+        elif status_filter == 'archive':
+            registrations = registrations.filter(distance__event__dateTo__lt=now().date())
+
         serializer = UserDistanceRegistrationSerializer(registrations, many=True)
         return Response(serializer.data)
 
