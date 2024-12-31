@@ -1,11 +1,12 @@
 from drf_yasg import openapi
 
 from authentication.serializers import (
-    AdditionalProfileDetailSerializer,
-    AdditionalProfileSerializer,
     UserProfileSerializer,
 )
-from user.serializer import UserDistanceRegistrationSerializer  # noqa
+from user.serializer import (
+    AdditionalProfileSerializer,
+    UserDistanceRegistrationSerializer,
+)
 
 
 class SwaggerDocs:
@@ -168,7 +169,23 @@ class SwaggerDocs:
     class UserRegistrationsViewSwagger:
         get = {
             'tags': ['User Distance Registration'],
-            'operation_description': 'Get all registrations of the authenticated user.',
+            'operation_description': (
+                'Get all registrations of the authenticated user. Use "status" query parameter to filter:\n'
+                '- "active" for active registrations\n'
+                '- "archive" for archived registrations'
+            ),
+            'manual_parameters': [
+                openapi.Parameter(
+                    'status',
+                    openapi.IN_QUERY,
+                    description='Filter by status: "active" or "archive".',
+                    type=openapi.TYPE_STRING,
+                    enum=['active', 'archive'],
+                ),
+                openapi.Parameter(
+                    'page', openapi.IN_QUERY, description='Page number for pagination', type=openapi.TYPE_STRING
+                ),
+            ],
             'responses': {
                 200: openapi.Response(
                     description='List of user registrations',
@@ -214,27 +231,34 @@ class SwaggerDocs:
                         ),
                     ),
                 ),
-                401: openapi.Schema(
-                    type=openapi.TYPE_OBJECT,
-                    properties={
-                        'detail': openapi.Schema(
-                            type=openapi.TYPE_STRING, description='Authentication credentials were not provided.'
-                        )
-                    },
-                    required=['detail'],
+                401: openapi.Response(
+                    description='Unauthorized',
+                    schema=openapi.Schema(
+                        type=openapi.TYPE_OBJECT,
+                        properties={
+                            'detail': openapi.Schema(
+                                type=openapi.TYPE_STRING, description='Authentication credentials were not provided.'
+                            )
+                        },
+                        required=['detail'],
+                    ),
                 ),
-                500: openapi.Schema(
-                    type=openapi.TYPE_OBJECT,
-                    properties={
-                        'detail': openapi.Schema(
-                            type=openapi.TYPE_STRING,
-                            description='An unexpected error occurred on the server.',
-                        )
-                    },
-                    required=['detail'],
+                500: openapi.Response(
+                    description='Server error',
+                    schema=openapi.Schema(
+                        type=openapi.TYPE_OBJECT,
+                        properties={
+                            'detail': openapi.Schema(
+                                type=openapi.TYPE_STRING,
+                                description='An unexpected error occurred on the server.',
+                            )
+                        },
+                        required=['detail'],
+                    ),
                 ),
             },
         }
+
 
 
     class AdditionalProfileList:
@@ -338,7 +362,7 @@ class SwaggerDocs:
             'tags': ['Additional Profile'],
             'operation_description': 'Get an additional profile',
             'responses': {
-                200: AdditionalProfileDetailSerializer,
+                200: AdditionalProfileSerializer,
                 400: openapi.Schema(
                     type=openapi.TYPE_OBJECT,
                     properties={
@@ -382,12 +406,61 @@ class SwaggerDocs:
             },
         }
 
+        patch = {
+            'tags': ['Additional Profile'],
+            'operation_description': 'Partially update an additional profile',
+            'request_body': AdditionalProfileSerializer,
+            'responses': {
+                200: AdditionalProfileSerializer,
+                400: openapi.Schema(
+                    type=openapi.TYPE_OBJECT,
+                    properties={
+                        'detail': openapi.Schema(
+                            type=openapi.TYPE_STRING,
+                            description='Invalid request parameters or data.',
+                        )
+                    },
+                    required=['detail'],
+                ),
+                401: openapi.Schema(
+                    type=openapi.TYPE_OBJECT,
+                    properties={
+                        'detail': openapi.Schema(
+                            type=openapi.TYPE_STRING, description='Invalid credentials.'
+                        )
+                    },
+                    required=['detail'],
+                ),
+                403: openapi.Schema(
+                    type=openapi.TYPE_OBJECT,
+                    properties={
+                        'detail': openapi.Schema(
+                            type=openapi.TYPE_STRING,
+                            description='Insufficient permissions to update this resource.',
+                        )
+                    },
+                    required=['detail'],
+                ),
+                404: openapi.Response(description='Profile not found'),
+                500: openapi.Schema(
+                    type=openapi.TYPE_OBJECT,
+                    properties={
+                        'detail': openapi.Schema(
+                            type=openapi.TYPE_STRING,
+                            description='An unexpected error occurred on the server.',
+                        )
+                    },
+                    required=['detail'],
+                ),
+            },
+        }
+
         put = {
             'tags': ['Additional Profile'],
             'operation_description': 'Update an additional profile',
-            'request_body': AdditionalProfileDetailSerializer,
+            'request_body': AdditionalProfileSerializer,
             'responses': {
-                200: AdditionalProfileDetailSerializer,
+                200: AdditionalProfileSerializer,
                 400: openapi.Schema(
                     type=openapi.TYPE_OBJECT,
                     properties={
@@ -717,6 +790,18 @@ class SwaggerDocs:
         get = {
             'tags': ['Event Likes'],
             'operation_description': 'Retrieve a list of liked events',
+            'manual_parameters': [
+                openapi.Parameter(
+                    'status',
+                    openapi.IN_QUERY,
+                    description='Filter by status: "active" or "archive".',
+                    type=openapi.TYPE_STRING,
+                    enum=['active', 'archive'],
+                ),
+                openapi.Parameter(
+                    'page', openapi.IN_QUERY, description='Page number for pagination', type=openapi.TYPE_STRING
+                ),
+            ],
             'responses': {
                 200: openapi.Schema(
                     type=openapi.TYPE_ARRAY,

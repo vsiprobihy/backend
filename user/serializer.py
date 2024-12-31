@@ -2,7 +2,7 @@ from rest_framework import serializers
 
 from event.additional_items.models import AdditionalItemEvent
 from event.promo_code.models import PromoCode
-from user.models import UserDistanceRegistration
+from user.models import AdditionalProfile, UserDistanceRegistration
 
 
 class UserDistanceRegistrationSerializer(serializers.ModelSerializer):
@@ -21,3 +21,24 @@ class UserDistanceRegistrationSerializer(serializers.ModelSerializer):
             'emergencyContactName', 'emergencyContactPhone', 'promoCode', 'additionalItems'
         ]
         read_only_fields = ['user', 'distance']
+
+
+class AdditionalProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = AdditionalProfile
+        fields = [
+            'id', 'firstName', 'lastName', 'firstNameEng', 'lastNameEng',
+            'gender', 'dateOfBirth', 'tShirtSize', 'country', 'city',
+            'phoneNumber', 'sportsClub', 'emergencyContactName',
+            'emergencyContactPhone', 'email'
+        ]
+
+    def validate(self, attrs):
+        user = self.context['request'].user
+        if user.additionalProfiles.count() >= 5:
+            raise serializers.ValidationError('User cannot have more than 5 additional profiles.')
+        return attrs
+
+    def create(self, validated_data):
+        validated_data['user'] = self.context['request'].user
+        return super().create(validated_data)

@@ -10,6 +10,7 @@ from organization.models import Organization, Organizer
 from organization.serializers import OrganizationSerializer
 from swagger.organization import SwaggerDocs
 from utils.custom_exceptions import ForbiddenError, NotFoundError, SuccessResponse, UnauthorizedError
+from utils.pagination import Pagination
 
 
 User = get_user_model()
@@ -22,6 +23,16 @@ class OrganizationListCreateView(APIView):
     def get(self, request):
         if request.user.is_authenticated:
             organization = Organization.objects.filter(organizerOrganization__user=request.user)
+
+            paginator = Pagination()
+            paginator.page_size = 4
+
+            paginated_organizations = paginator.paginate_queryset(organization, request)
+
+            if paginated_organizations is not None:
+                serializer = OrganizationSerializer(paginated_organizations, many=True, context={'request': request})
+                return paginator.get_paginated_response(serializer.data)
+
             serializer = OrganizationSerializer(organization, many=True, context={'request': request})
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response([], status=status.HTTP_200_OK)
@@ -88,7 +99,7 @@ class OrganizationDetailView(APIView):
 class InviteOrganizerView(APIView):
     permission_classes = [permissions.IsAuthenticated, IsOrganizer]
 
-    @swagger_auto_schema(**SwaggerDocs.Organization.post)
+    @swagger_auto_schema(**SwaggerDocs.InviteOrganaizer.post)
     def post(self, request, organization_id):
         email = request.data.get('email')
         message = request.data.get('message', '')  # noqa: F841

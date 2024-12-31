@@ -1,6 +1,5 @@
 import os
 
-from django.conf import settings
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.db import models
 from django.utils.translation import gettext_lazy as _
@@ -31,47 +30,35 @@ class BaseProfile(models.Model):
     firstName = models.CharField(max_length=50)
     lastName = models.CharField(max_length=50)
 
-    firstNameEng = models.CharField(max_length=50, null=True, blank=True)
-    lastNameEng = models.CharField(max_length=50, null=True, blank=True)
+    firstNameEng = models.CharField(max_length=50, null=False, blank=False)
+    lastNameEng = models.CharField(max_length=50, null=False, blank=False)
 
-    gender = models.CharField(max_length=10, choices=[('M', 'Male'), ('F', 'Female')], null=True)
-    dateOfBirth = models.DateField(null=True)
+    gender = models.CharField(max_length=10, choices=[('M', 'Male'), ('F', 'Female')], null=False)
+    dateOfBirth = models.DateField(null=False)
     tShirtSize = models.CharField(
         max_length=5, choices=T_SHIRT_SIZE_CHOICES, null=True
     )
 
-    country = models.CharField(max_length=100, default='Unknown', null=True)
-    city = models.CharField(max_length=100, default='Unknown', null=True)
+    country = models.CharField(max_length=100, null=False)
+    city = models.CharField(max_length=100, null=False)
 
     phoneNumber = models.CharField(
         _('phone number'),
         max_length=20,
-        null=True,
+        null=False,
         validators=[validate_phone_number],
     )
 
-    avatar = models.ImageField(
-        null=True,
-        blank=True,
-        upload_to=customer_image_file_path,
-        max_length=255,
-        validators=[validate_image_file, validate_file_size]
-    )
+    sportsClub = models.CharField(max_length=100, null=False)
 
-    sportsClub = models.CharField(max_length=100, null=True)
-
-    emergencyContactName = models.CharField(max_length=100, null=True)
+    emergencyContactName = models.CharField(max_length=100, null=False)
     emergencyContactPhone = models.CharField(
         _('phone number'),
-        null=True,
+        null=False,
         max_length=20,
         validators=[validate_phone_number],
     )
 
-    def save(self, *args, **kwargs):
-        if self.avatar:
-            process_image(self.avatar, size=(300, 300))
-        super().save(*args, **kwargs)
 
     class Meta:
         abstract = True
@@ -93,6 +80,14 @@ class CustomUser(BaseProfile, AbstractBaseUser, PermissionsMixin):
     is_active = models.BooleanField(default=False)
     is_staff = models.BooleanField(default=False)
 
+    avatar = models.ImageField(
+        null=True,
+        blank=True,
+        upload_to=customer_image_file_path,
+        max_length=255,
+        validators=[validate_image_file, validate_file_size]
+    )
+
     objects = CustomUserManager()
 
     USERNAME_FIELD = 'email'
@@ -101,14 +96,8 @@ class CustomUser(BaseProfile, AbstractBaseUser, PermissionsMixin):
     def __str__(self):
         return self.email
 
+    def save(self, *args, **kwargs):
+        if self.avatar:
+            process_image(self.avatar, size=(300, 300))
+        super().save(*args, **kwargs)
 
-class AdditionalProfile(BaseProfile):
-    user = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        related_name='additionalProfiles',
-        on_delete=models.CASCADE,
-    )
-    email = models.EmailField()
-
-    def __str__(self):
-        return f'{self.firstName} {self.lastName} ({self.email})'

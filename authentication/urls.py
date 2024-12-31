@@ -1,7 +1,6 @@
-from django.urls import include, path
+from django.urls import path
 from rest_framework_simplejwt.views import TokenRefreshView
 
-from authentication.auth_views import google_account_info, google_login
 from authentication.views import (
     ActivateUserEmailView,
     CustomResetPasswordConfirmView,
@@ -12,9 +11,9 @@ from authentication.views import (
 
 
 urlpatterns = [
-    path('oauth/', include('social_django.urls', namespace='social')),
-    path('oauth/login-success/', google_login, name='google_login'),
-    path('google-account-info/', google_account_info, name='google_account_info'),
+    # path('oauth/', include('social_django.urls', namespace='social')),
+    # path('oauth/login-success/', google_login, name='google_login'),
+    # path('google-account-info/', google_account_info, name='google_account_info'),
     path('register/', RegisterView.as_view(), name='register'),
     path('login/', LoginView.as_view(), name='token_obtain_pair'),
     path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),

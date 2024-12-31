@@ -1,13 +1,12 @@
+from django.utils.timezone import now
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from authentication.models import AdditionalProfile, CustomUser
+from authentication.models import CustomUser
 from authentication.serializers import (
-    AdditionalProfileDetailSerializer,
-    AdditionalProfileSerializer,
     UserProfileSerializer,
 )
 from custom_admin.models import OrganizerRequest
@@ -16,10 +15,14 @@ from event.distance_details.models import DistanceEvent
 from event.models import Event
 from event.promo_code.models import PromoCode
 from swagger.user import SwaggerDocs
-from user.models import EventLike, UserDistanceRegistration
-from user.serializer import UserDistanceRegistrationSerializer
+from user.models import AdditionalProfile, EventLike, UserDistanceRegistration
+from user.serializer import (
+    AdditionalProfileSerializer,
+    UserDistanceRegistrationSerializer,
+)
 from utils.constants.constants_event import STATUS_PENDING, STATUS_UNPUBLISHED
 from utils.custom_exceptions import BadRequestError, CreatedResponse, ForbiddenError, NotFoundError
+from utils.pagination import Pagination
 
 
 class UserDistanceRegistrationView(APIView):
@@ -67,8 +70,25 @@ class UserDistanceRegistrationsView(APIView):
 
     @swagger_auto_schema(**SwaggerDocs.UserRegistrationsViewSwagger.get)
     def get(self, request):
+        status_filter = request.query_params.get('status')
         registrations = UserDistanceRegistration.objects.filter(user=request.user)
+
+        if status_filter == 'active':
+            registrations = registrations.filter(distance__event__dateTo__gte=now().date())
+        elif status_filter == 'archive':
+            registrations = registrations.filter(distance__event__dateTo__lt=now().date())
+
+        paginator = Pagination()
+        paginator.page_size = 4
+
+        paginated_registrations = paginator.paginate_queryset(registrations, request)
+
+        if paginated_registrations is not None:
+            serializer = UserDistanceRegistrationSerializer(paginated_registrations, many=True)
+            return paginator.get_paginated_response(serializer.data)
+
         serializer = UserDistanceRegistrationSerializer(registrations, many=True)
+
         return Response(serializer.data)
 
 
@@ -94,15 +114,15 @@ class AdditionalProfileListView(APIView):
 
     @swagger_auto_schema(**SwaggerDocs.AdditionalProfileList.get)
     def get(self, request):
-        profiles = request.user.additional_profiles.all()
+        profiles = request.user.additionalProfiles.all()
         serializer = AdditionalProfileSerializer(profiles, many=True)
         return Response(serializer.data)
 
     @swagger_auto_schema(**SwaggerDocs.AdditionalProfileList.post)
     def post(self, request):
-        serializer = AdditionalProfileSerializer(data=request.data)
+        serializer = AdditionalProfileSerializer(data=request.data, context={'request': request})
         if serializer.is_valid():
-            serializer.save(user=request.user)
+            serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -111,19 +131,35 @@ class AdditionalProfileDetailView(APIView):
     permission_classes = [IsAuthenticated]
 
     @swagger_auto_schema(**SwaggerDocs.AdditionalProfileDetail.get)
-    def get(self, request, _id):
+    def get(self, request, profile_id):
         try:
-            profile = request.user.additional_profiles.get(id=_id)
-            serializer = AdditionalProfileDetailSerializer(profile)
+            profile = request.user.additionalProfiles.get(id=profile_id)
+            serializer = AdditionalProfileSerializer(profile)
             return Response(serializer.data)
         except AdditionalProfile.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
 
     @swagger_auto_schema(**SwaggerDocs.AdditionalProfileDetail.put)
-    def put(self, request, _id):
+    def put(self, request, profile_id):
         try:
-            profile = request.user.additional_profiles.get(id=_id)
-            serializer = AdditionalProfileDetailSerializer(profile, data=request.data)
+            profile = request.user.additionalProfiles.get(id=profile_id)
+            serializer = AdditionalProfileSerializer(
+                profile, data=request.data, context={'request': request}
+            )
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except AdditionalProfile.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+
+    @swagger_auto_schema(**SwaggerDocs.AdditionalProfileDetail.patch)
+    def patch(self, request, profile_id):
+        try:
+            profile = request.user.additionalProfiles.get(id=profile_id)
+            serializer = AdditionalProfileSerializer(
+                profile, data=request.data, partial=True, context={'request': request}
+            )
             if serializer.is_valid():
                 serializer.save()
                 return Response(serializer.data)
@@ -132,9 +168,9 @@ class AdditionalProfileDetailView(APIView):
             return Response(status=status.HTTP_404_NOT_FOUND)
 
     @swagger_auto_schema(**SwaggerDocs.AdditionalProfileDetail.delete)
-    def delete(self, request, _id):
+    def delete(self, request, profile_id):
         try:
-            profile = request.user.additional_profiles.get(id=_id)
+            profile = request.user.additionalProfiles.get(id=profile_id)
             profile.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
         except AdditionalProfile.DoesNotExist:
@@ -202,8 +238,17 @@ class LikedEventsView(APIView):
     @swagger_auto_schema(**SwaggerDocs.LikedEventsView.get)
     def get(self, request):
         liked_events = EventLike.objects.get_liked_events(request.user)
-        data = [
-            {'id': event.id, 'name': event.name, 'dateFrom': event.dateFrom, 'dateTo': event.dateTo}
-            for event in liked_events
-        ]
+
+        paginator = Pagination()
+        paginator.page_size = 4
+
+        paginated_events = paginator.paginate_queryset(liked_events, request)
+
+        if paginated_events is not None:
+            data = [
+                {'id': event.id, 'name': event.name, 'dateFrom': event.dateFrom, 'dateTo': event.dateTo}
+                for event in paginated_events
+            ]
+            return paginator.get_paginated_response(data)
+
         return Response(data, status=status.HTTP_200_OK)
