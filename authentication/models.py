@@ -1,6 +1,5 @@
 import os
 
-from django.conf import settings
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.db import models
 from django.utils.translation import gettext_lazy as _
@@ -102,14 +101,3 @@ class CustomUser(BaseProfile, AbstractBaseUser, PermissionsMixin):
             process_image(self.avatar, size=(300, 300))
         super().save(*args, **kwargs)
 
-
-class AdditionalProfile(BaseProfile):
-    user = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        related_name='additionalProfiles',
-        on_delete=models.CASCADE,
-    )
-    email = models.EmailField()
-
-    def __str__(self):
-        return f'{self.firstName} {self.lastName} ({self.email})'

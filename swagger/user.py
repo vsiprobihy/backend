@@ -1,11 +1,13 @@
 from drf_yasg import openapi
 
 from authentication.serializers import (
-    AdditionalProfileDetailSerializer,
-    AdditionalProfileSerializer,
     UserProfileSerializer,
 )
-from user.serializer import UserDistanceRegistrationSerializer  # noqa
+from user.serializer import (
+    AdditionalProfileDetailSerializer,
+    AdditionalProfileSerializer,
+    UserDistanceRegistrationSerializer,
+)
 
 
 class SwaggerDocs:

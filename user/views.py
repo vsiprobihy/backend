@@ -5,10 +5,8 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from authentication.models import AdditionalProfile, CustomUser
+from authentication.models import CustomUser
 from authentication.serializers import (
-    AdditionalProfileDetailSerializer,
-    AdditionalProfileSerializer,
     UserProfileSerializer,
 )
 from custom_admin.models import OrganizerRequest
@@ -17,8 +15,12 @@ from event.distance_details.models import DistanceEvent
 from event.models import Event
 from event.promo_code.models import PromoCode
 from swagger.user import SwaggerDocs
-from user.models import EventLike, UserDistanceRegistration
-from user.serializer import UserDistanceRegistrationSerializer
+from user.models import AdditionalProfile, EventLike, UserDistanceRegistration
+from user.serializer import (
+    AdditionalProfileDetailSerializer,
+    AdditionalProfileSerializer,
+    UserDistanceRegistrationSerializer,
+)
 from utils.constants.constants_event import STATUS_PENDING, STATUS_UNPUBLISHED
 from utils.custom_exceptions import BadRequestError, CreatedResponse, ForbiddenError, NotFoundError
 from utils.pagination import Pagination

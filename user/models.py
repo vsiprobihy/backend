@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.db import models
 from django.utils.timezone import now
 
@@ -7,6 +8,18 @@ from event.distance_details.models import DistanceEvent
 from event.models import Event
 from event.promo_code.models import PromoCode
 from user.managers import EventLikeManager
+
+
+class AdditionalProfile(BaseProfile):
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        related_name='additionalProfiles',
+        on_delete=models.CASCADE,
+    )
+    email = models.EmailField()
+
+    def __str__(self):
+        return f'{self.firstName} {self.lastName} ({self.email})'
 
 
 class UserDistanceRegistration(models.Model):

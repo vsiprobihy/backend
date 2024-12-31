@@ -2,7 +2,7 @@ from rest_framework import serializers
 
 from event.additional_items.models import AdditionalItemEvent
 from event.promo_code.models import PromoCode
-from user.models import UserDistanceRegistration
+from user.models import AdditionalProfile, UserDistanceRegistration
 
 
 class UserDistanceRegistrationSerializer(serializers.ModelSerializer):
@@ -21,3 +21,14 @@ class UserDistanceRegistrationSerializer(serializers.ModelSerializer):
             'emergencyContactName', 'emergencyContactPhone', 'promoCode', 'additionalItems'
         ]
         read_only_fields = ['user', 'distance']
+
+
+class AdditionalProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = AdditionalProfile
+        exclude = ['user']
+
+class AdditionalProfileDetailSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = AdditionalProfile
+        fields = '__all__'
