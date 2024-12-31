@@ -131,18 +131,18 @@ class AdditionalProfileDetailView(APIView):
     permission_classes = [IsAuthenticated]
 
     @swagger_auto_schema(**SwaggerDocs.AdditionalProfileDetail.get)
-    def get(self, request, _id):
+    def get(self, request, profile_id):
         try:
-            profile = request.user.additionalProfiles.get(id=_id)
+            profile = request.user.additionalProfiles.get(id=profile_id)
             serializer = AdditionalProfileSerializer(profile)
             return Response(serializer.data)
         except AdditionalProfile.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
 
     @swagger_auto_schema(**SwaggerDocs.AdditionalProfileDetail.put)
-    def put(self, request, _id):
+    def put(self, request, profile_id):
         try:
-            profile = request.user.additionalProfiles.get(id=_id)
+            profile = request.user.additionalProfiles.get(id=profile_id)
             serializer = AdditionalProfileSerializer(profile, data=request.data)
             if serializer.is_valid():
                 serializer.save()
@@ -152,9 +152,9 @@ class AdditionalProfileDetailView(APIView):
             return Response(status=status.HTTP_404_NOT_FOUND)
 
     @swagger_auto_schema(**SwaggerDocs.AdditionalProfileDetail.patch)
-    def patch(self, request, _id):
+    def patch(self, request, profile_id):
         try:
-            profile = request.user.additionalProfiles.get(id=_id)
+            profile = request.user.additionalProfiles.get(id=profile_id)
             serializer = AdditionalProfileSerializer(profile, data=request.data, partial=True)
             if serializer.is_valid():
                 serializer.save()
@@ -164,9 +164,9 @@ class AdditionalProfileDetailView(APIView):
             return Response(status=status.HTTP_404_NOT_FOUND)
 
     @swagger_auto_schema(**SwaggerDocs.AdditionalProfileDetail.delete)
-    def delete(self, request, _id):
+    def delete(self, request, profile_id):
         try:
-            profile = request.user.additionalProfiles.get(id=_id)
+            profile = request.user.additionalProfiles.get(id=profile_id)
             profile.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
         except AdditionalProfile.DoesNotExist:
