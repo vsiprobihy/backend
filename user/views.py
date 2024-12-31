@@ -121,9 +121,9 @@ class AdditionalProfileListView(APIView):
 
     @swagger_auto_schema(**SwaggerDocs.AdditionalProfileList.post)
     def post(self, request):
-        serializer = AdditionalProfileSerializer(data=request.data)
+        serializer = AdditionalProfileSerializer(data=request.data, context={'request': request})
         if serializer.is_valid():
-            serializer.save(user=request.user)
+            serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 

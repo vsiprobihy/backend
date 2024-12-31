@@ -28,6 +28,16 @@ class AdditionalProfileSerializer(serializers.ModelSerializer):
         model = AdditionalProfile
         exclude = ['user']
 
+    def validate(self, attrs):
+        user = self.context['request'].user
+        if user.additionalProfiles.count() >= 5:
+            raise serializers.ValidationError('User cannot have more than 5 additional profiles.')
+        return attrs
+
+    def create(self, validated_data):
+        validated_data['user'] = self.context['request'].user
+        return super().create(validated_data)
+
 class AdditionalProfileDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = AdditionalProfile
