@@ -143,7 +143,9 @@ class AdditionalProfileDetailView(APIView):
     def put(self, request, profile_id):
         try:
             profile = request.user.additionalProfiles.get(id=profile_id)
-            serializer = AdditionalProfileSerializer(profile, data=request.data)
+            serializer = AdditionalProfileSerializer(
+                profile, data=request.data, context={'request': request}
+            )
             if serializer.is_valid():
                 serializer.save()
                 return Response(serializer.data)
@@ -155,7 +157,9 @@ class AdditionalProfileDetailView(APIView):
     def patch(self, request, profile_id):
         try:
             profile = request.user.additionalProfiles.get(id=profile_id)
-            serializer = AdditionalProfileSerializer(profile, data=request.data, partial=True)
+            serializer = AdditionalProfileSerializer(
+                profile, data=request.data, partial=True, context={'request': request}
+            )
             if serializer.is_valid():
                 serializer.save()
                 return Response(serializer.data)
