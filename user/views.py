@@ -152,6 +152,18 @@ class AdditionalProfileDetailView(APIView):
         except AdditionalProfile.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
 
+    @swagger_auto_schema(**SwaggerDocs.AdditionalProfileDetail.patch)
+    def patch(self, request, _id):
+        try:
+            profile = request.user.additionalProfiles.get(id=_id)
+            serializer = AdditionalProfileDetailSerializer(profile, data=request.data, partial=True)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except AdditionalProfile.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+
     @swagger_auto_schema(**SwaggerDocs.AdditionalProfileDetail.delete)
     def delete(self, request, _id):
         try:

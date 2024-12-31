@@ -407,6 +407,55 @@ class SwaggerDocs:
             },
         }
 
+        patch = {
+            'tags': ['Additional Profile'],
+            'operation_description': 'Partially update an additional profile',
+            'request_body': AdditionalProfileDetailSerializer,
+            'responses': {
+                200: AdditionalProfileDetailSerializer,
+                400: openapi.Schema(
+                    type=openapi.TYPE_OBJECT,
+                    properties={
+                        'detail': openapi.Schema(
+                            type=openapi.TYPE_STRING,
+                            description='Invalid request parameters or data.',
+                        )
+                    },
+                    required=['detail'],
+                ),
+                401: openapi.Schema(
+                    type=openapi.TYPE_OBJECT,
+                    properties={
+                        'detail': openapi.Schema(
+                            type=openapi.TYPE_STRING, description='Invalid credentials.'
+                        )
+                    },
+                    required=['detail'],
+                ),
+                403: openapi.Schema(
+                    type=openapi.TYPE_OBJECT,
+                    properties={
+                        'detail': openapi.Schema(
+                            type=openapi.TYPE_STRING,
+                            description='Insufficient permissions to update this resource.',
+                        )
+                    },
+                    required=['detail'],
+                ),
+                404: openapi.Response(description='Profile not found'),
+                500: openapi.Schema(
+                    type=openapi.TYPE_OBJECT,
+                    properties={
+                        'detail': openapi.Schema(
+                            type=openapi.TYPE_STRING,
+                            description='An unexpected error occurred on the server.',
+                        )
+                    },
+                    required=['detail'],
+                ),
+            },
+        }
+
         put = {
             'tags': ['Additional Profile'],
             'operation_description': 'Update an additional profile',
