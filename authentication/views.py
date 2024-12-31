@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.contrib.auth import authenticate
 from django.contrib.auth.tokens import default_token_generator
-from django.utils.encoding import force_str, force_bytes
+from django.utils.encoding import force_bytes, force_str
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from djoser.views import UserViewSet
 from drf_yasg.utils import swagger_auto_schema

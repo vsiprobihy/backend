@@ -6,7 +6,7 @@ from django.core.files.storage import default_storage
 from django.forms import ValidationError
 from rest_framework import serializers
 
-from authentication.models import AdditionalProfile, CustomUser
+from authentication.models import CustomUser
 
 
 def validate_password_confirm(password, password2):
@@ -124,14 +124,3 @@ class UserProfileSerializer(serializers.ModelSerializer):
     def get_email(self, obj):  # noqa
         return obj.email
 
-
-class AdditionalProfileSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = AdditionalProfile
-        fields = '__all__'
-
-
-class AdditionalProfileDetailSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = AdditionalProfile
-        fields = '__all__'

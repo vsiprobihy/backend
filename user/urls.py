@@ -22,7 +22,7 @@ urlpatterns = [
         name='additional_profiles_list',
     ),
     path(
-        'profile/additional-profile/<int:id>/',
+        'profile/additional-profile/<int:profile_id>/',
         AdditionalProfileDetailView.as_view(),
         name='additional_profile_detail',
     ),
