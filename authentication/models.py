@@ -50,14 +50,6 @@ class BaseProfile(models.Model):
         validators=[validate_phone_number],
     )
 
-    avatar = models.ImageField(
-        null=True,
-        blank=True,
-        upload_to=customer_image_file_path,
-        max_length=255,
-        validators=[validate_image_file, validate_file_size]
-    )
-
     sportsClub = models.CharField(max_length=100, null=False)
 
     emergencyContactName = models.CharField(max_length=100, null=False)
@@ -68,10 +60,6 @@ class BaseProfile(models.Model):
         validators=[validate_phone_number],
     )
 
-    def save(self, *args, **kwargs):
-        if self.avatar:
-            process_image(self.avatar, size=(300, 300))
-        super().save(*args, **kwargs)
 
     class Meta:
         abstract = True
@@ -93,6 +81,14 @@ class CustomUser(BaseProfile, AbstractBaseUser, PermissionsMixin):
     is_active = models.BooleanField(default=False)
     is_staff = models.BooleanField(default=False)
 
+    avatar = models.ImageField(
+        null=True,
+        blank=True,
+        upload_to=customer_image_file_path,
+        max_length=255,
+        validators=[validate_image_file, validate_file_size]
+    )
+
     objects = CustomUserManager()
 
     USERNAME_FIELD = 'email'
@@ -100,6 +96,11 @@ class CustomUser(BaseProfile, AbstractBaseUser, PermissionsMixin):
 
     def __str__(self):
         return self.email
+
+    def save(self, *args, **kwargs):
+        if self.avatar:
+            process_image(self.avatar, size=(300, 300))
+        super().save(*args, **kwargs)
 
 
 class AdditionalProfile(BaseProfile):

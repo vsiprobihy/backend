@@ -113,7 +113,7 @@ class AdditionalProfileListView(APIView):
 
     @swagger_auto_schema(**SwaggerDocs.AdditionalProfileList.get)
     def get(self, request):
-        profiles = request.user.additional_profiles.all()
+        profiles = request.user.additionalProfiles.all()
         serializer = AdditionalProfileSerializer(profiles, many=True)
         return Response(serializer.data)
 
@@ -132,7 +132,7 @@ class AdditionalProfileDetailView(APIView):
     @swagger_auto_schema(**SwaggerDocs.AdditionalProfileDetail.get)
     def get(self, request, _id):
         try:
-            profile = request.user.additional_profiles.get(id=_id)
+            profile = request.user.additionalProfiles.get(id=_id)
             serializer = AdditionalProfileDetailSerializer(profile)
             return Response(serializer.data)
         except AdditionalProfile.DoesNotExist:
@@ -141,7 +141,7 @@ class AdditionalProfileDetailView(APIView):
     @swagger_auto_schema(**SwaggerDocs.AdditionalProfileDetail.put)
     def put(self, request, _id):
         try:
-            profile = request.user.additional_profiles.get(id=_id)
+            profile = request.user.additionalProfiles.get(id=_id)
             serializer = AdditionalProfileDetailSerializer(profile, data=request.data)
             if serializer.is_valid():
                 serializer.save()
@@ -153,7 +153,7 @@ class AdditionalProfileDetailView(APIView):
     @swagger_auto_schema(**SwaggerDocs.AdditionalProfileDetail.delete)
     def delete(self, request, _id):
         try:
-            profile = request.user.additional_profiles.get(id=_id)
+            profile = request.user.additionalProfiles.get(id=_id)
             profile.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
         except AdditionalProfile.DoesNotExist:
