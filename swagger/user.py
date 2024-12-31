@@ -4,7 +4,6 @@ from authentication.serializers import (
     UserProfileSerializer,
 )
 from user.serializer import (
-    AdditionalProfileDetailSerializer,
     AdditionalProfileSerializer,
     UserDistanceRegistrationSerializer,
 )
@@ -363,7 +362,7 @@ class SwaggerDocs:
             'tags': ['Additional Profile'],
             'operation_description': 'Get an additional profile',
             'responses': {
-                200: AdditionalProfileDetailSerializer,
+                200: AdditionalProfileSerializer,
                 400: openapi.Schema(
                     type=openapi.TYPE_OBJECT,
                     properties={
@@ -410,9 +409,9 @@ class SwaggerDocs:
         patch = {
             'tags': ['Additional Profile'],
             'operation_description': 'Partially update an additional profile',
-            'request_body': AdditionalProfileDetailSerializer,
+            'request_body': AdditionalProfileSerializer,
             'responses': {
-                200: AdditionalProfileDetailSerializer,
+                200: AdditionalProfileSerializer,
                 400: openapi.Schema(
                     type=openapi.TYPE_OBJECT,
                     properties={
@@ -459,9 +458,9 @@ class SwaggerDocs:
         put = {
             'tags': ['Additional Profile'],
             'operation_description': 'Update an additional profile',
-            'request_body': AdditionalProfileDetailSerializer,
+            'request_body': AdditionalProfileSerializer,
             'responses': {
-                200: AdditionalProfileDetailSerializer,
+                200: AdditionalProfileSerializer,
                 400: openapi.Schema(
                     type=openapi.TYPE_OBJECT,
                     properties={

@@ -26,7 +26,12 @@ class UserDistanceRegistrationSerializer(serializers.ModelSerializer):
 class AdditionalProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = AdditionalProfile
-        exclude = ['user']
+        fields = [
+            'id', 'firstName', 'lastName', 'firstNameEng', 'lastNameEng',
+            'gender', 'dateOfBirth', 'tShirtSize', 'country', 'city',
+            'phoneNumber', 'sportsClub', 'emergencyContactName',
+            'emergencyContactPhone', 'email'
+        ]
 
     def validate(self, attrs):
         user = self.context['request'].user
@@ -37,8 +42,3 @@ class AdditionalProfileSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         validated_data['user'] = self.context['request'].user
         return super().create(validated_data)
-
-class AdditionalProfileDetailSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = AdditionalProfile
-        fields = '__all__'

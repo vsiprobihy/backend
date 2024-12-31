@@ -17,7 +17,6 @@ from event.promo_code.models import PromoCode
 from swagger.user import SwaggerDocs
 from user.models import AdditionalProfile, EventLike, UserDistanceRegistration
 from user.serializer import (
-    AdditionalProfileDetailSerializer,
     AdditionalProfileSerializer,
     UserDistanceRegistrationSerializer,
 )
@@ -135,7 +134,7 @@ class AdditionalProfileDetailView(APIView):
     def get(self, request, _id):
         try:
             profile = request.user.additionalProfiles.get(id=_id)
-            serializer = AdditionalProfileDetailSerializer(profile)
+            serializer = AdditionalProfileSerializer(profile)
             return Response(serializer.data)
         except AdditionalProfile.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
@@ -144,7 +143,7 @@ class AdditionalProfileDetailView(APIView):
     def put(self, request, _id):
         try:
             profile = request.user.additionalProfiles.get(id=_id)
-            serializer = AdditionalProfileDetailSerializer(profile, data=request.data)
+            serializer = AdditionalProfileSerializer(profile, data=request.data)
             if serializer.is_valid():
                 serializer.save()
                 return Response(serializer.data)
@@ -156,7 +155,7 @@ class AdditionalProfileDetailView(APIView):
     def patch(self, request, _id):
         try:
             profile = request.user.additionalProfiles.get(id=_id)
-            serializer = AdditionalProfileDetailSerializer(profile, data=request.data, partial=True)
+            serializer = AdditionalProfileSerializer(profile, data=request.data, partial=True)
             if serializer.is_valid():
                 serializer.save()
                 return Response(serializer.data)
