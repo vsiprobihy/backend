@@ -48,6 +48,9 @@ class RegisterSerializer(serializers.ModelSerializer):
         - 1 special character
         - 1 number
         """
+        if len(value) < 8:
+            raise ValidationError('Password must be at least 8 characters long.')
+
         if not re.search(r'[A-Z]', value):
             raise ValidationError('Password must contain at least 1 uppercase letter.')
 

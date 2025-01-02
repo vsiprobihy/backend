@@ -244,11 +244,11 @@ class LikedEventsView(APIView):
 
         paginated_events = paginator.paginate_queryset(liked_events, request)
 
-        if paginated_events is not None:
+        if paginated_events:
             data = [
                 {'id': event.id, 'name': event.name, 'dateFrom': event.dateFrom, 'dateTo': event.dateTo}
                 for event in paginated_events
             ]
             return paginator.get_paginated_response(data)
 
-        return Response(data, status=status.HTTP_200_OK)
+        return paginator.get_paginated_response([])
