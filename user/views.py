@@ -43,6 +43,9 @@ class UserDistanceRegistrationView(APIView):
         if UserDistanceRegistration.objects.filter(user=user, distance=distance).exists():
             return BadRequestError('You are already registered for this distance.').get_response()
 
+        # TODO: Add startingNumber
+        # startingNumber
+
         promo_code_id = request.data.get('promoCode')
         promo_code = None
         if promo_code_id:
@@ -244,11 +247,11 @@ class LikedEventsView(APIView):
 
         paginated_events = paginator.paginate_queryset(liked_events, request)
 
-        if paginated_events is not None:
+        if paginated_events:
             data = [
                 {'id': event.id, 'name': event.name, 'dateFrom': event.dateFrom, 'dateTo': event.dateTo}
                 for event in paginated_events
             ]
             return paginator.get_paginated_response(data)
 
-        return Response(data, status=status.HTTP_200_OK)
+        return paginator.get_paginated_response([])

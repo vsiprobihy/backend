@@ -730,7 +730,7 @@ class SwaggerDocs:
 
     class LikeEventView:
         post = {
-            'tags': ['Event Likes'],
+            'tags': ['Event Like'],
             'operation_description': 'Like an event by its ID',
             'responses': {
                 200: openapi.Schema(
@@ -764,7 +764,7 @@ class SwaggerDocs:
         }
 
         delete = {
-            'tags': ['Event Likes'],
+            'tags': ['Event Like'],
             'operation_description': 'Unlike an event by its ID',
             'responses': {
                 200: openapi.Schema(
@@ -788,7 +788,7 @@ class SwaggerDocs:
 
     class LikedEventsView:
         get = {
-            'tags': ['Event Likes'],
+            'tags': ['Event Like'],
             'operation_description': 'Retrieve a list of liked events',
             'manual_parameters': [
                 openapi.Parameter(

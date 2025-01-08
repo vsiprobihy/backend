@@ -11,7 +11,7 @@ from event.serializers import EventSerializer
 from organization.decorators import (
     check_organization_access_decorator,
     check_organizer_access_decorator,
-    extract_for_event_access_directly,
+    extract_event_directly,
     extract_organization_directly,
 )
 from organization.models import Organizer
@@ -82,14 +82,14 @@ class EventDetailView(APIView):
         return event
 
     @swagger_auto_schema(**SwaggerDocs.EventDetailView.get)
-    @check_organization_access_decorator(extract_for_event_access_directly)
+    @check_organization_access_decorator(extract_event_directly)
     def get(self, request, organization_id, event_id):
         event = self.get_object(event_id, organization_id)
         serializer = EventSerializer(event)
         return Response(serializer.data)
 
     @swagger_auto_schema(**SwaggerDocs.EventDetailView.put)
-    @check_organization_access_decorator(extract_for_event_access_directly)
+    @check_organization_access_decorator(extract_event_directly)
     def put(self, request, organization_id, event_id):
         event = self.get_object(event_id, organization_id)
         request.data['organization_id'] = organization_id
@@ -103,7 +103,7 @@ class EventDetailView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @swagger_auto_schema(**SwaggerDocs.EventDetailView.patch)
-    @check_organization_access_decorator(extract_for_event_access_directly)
+    @check_organization_access_decorator(extract_event_directly)
     def patch(self, request, organization_id, event_id):
         event = self.get_object(event_id, organization_id)
         serializer = EventSerializer(event, data=request.data, partial=True, context={'request': request})
@@ -116,7 +116,7 @@ class EventDetailView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @swagger_auto_schema(**SwaggerDocs.EventDetailView.delete)
-    @check_organization_access_decorator(extract_for_event_access_directly)
+    @check_organization_access_decorator(extract_event_directly)
     def delete(self, request, organization_id, event_id):
         event = self.get_object(event_id, organization_id)
         event.delete()
