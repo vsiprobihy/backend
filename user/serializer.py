@@ -13,6 +13,8 @@ class UserDistanceRegistrationSerializer(serializers.ModelSerializer):
         many=True, queryset=AdditionalItemEvent.objects.all(), required=False
     )
 
+    # TODO: Add startingNumber
+    # startingNumber
     class Meta:
         model = UserDistanceRegistration
         fields = [

@@ -42,7 +42,10 @@ class UserDistanceRegistrationView(APIView):
 
         if UserDistanceRegistration.objects.filter(user=user, distance=distance).exists():
             return BadRequestError('You are already registered for this distance.').get_response()
-        # TODO: Add logic add number
+
+        # TODO: Add startingNumber
+        # startingNumber
+
         promo_code_id = request.data.get('promoCode')
         promo_code = None
         if promo_code_id:
