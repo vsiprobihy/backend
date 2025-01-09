@@ -9,30 +9,120 @@ class SwaggerDocs:
     class PublicEventListView:
         get = {
             'tags': ['Public Event'],
-            'operation_description': 'Retrieve detailed information list event',
+            'operation_description': 'Retrieve a detailed list of events with pagination.',
             'responses': {
-                200: EventSerializer,
+                200: openapi.Response(
+                    description='List of events with pagination',
+                    schema=openapi.Schema(
+                        type=openapi.TYPE_OBJECT,
+                        properties={
+                            'pagination': openapi.Schema(
+                                type=openapi.TYPE_OBJECT,
+                                properties={
+                                    'next_page': openapi.Schema(
+                                        type=openapi.TYPE_STRING,
+                                        description='URL for the next page of results',
+                                        nullable=True
+                                    ),
+                                    'current_page': openapi.Schema(
+                                        type=openapi.TYPE_INTEGER,
+                                        description='Current page number'
+                                    ),
+                                    'previous_page': openapi.Schema(
+                                        type=openapi.TYPE_STRING,
+                                        description='URL for the previous page of results',
+                                        nullable=True
+                                    ),
+                                    'num_pages': openapi.Schema(
+                                        type=openapi.TYPE_INTEGER,
+                                        description='Total number of pages'
+                                    ),
+                                },
+                                required=['current_page', 'num_pages']
+                            ),
+                            'items_count': openapi.Schema(
+                                type=openapi.TYPE_INTEGER,
+                                description='Total number of events'
+                            ),
+                            'items': openapi.Schema(
+                                type=openapi.TYPE_ARRAY,
+                                items=openapi.Items(
+                                    type=openapi.TYPE_OBJECT,
+                                    properties={
+                                        'id': openapi.Schema(type=openapi.TYPE_INTEGER),
+                                        'name': openapi.Schema(type=openapi.TYPE_STRING),
+                                        'organizer': openapi.Schema(
+                                            type=openapi.TYPE_OBJECT,
+                                            properties={
+                                                'user': openapi.Schema(type=openapi.TYPE_STRING),
+                                                'organization': openapi.Schema(type=openapi.TYPE_STRING)
+                                            },
+                                            required=['user', 'organization']
+                                        ),
+                                        'competitionType': openapi.Schema(
+                                            type=openapi.TYPE_ARRAY,
+                                            items=openapi.Items(
+                                                type=openapi.TYPE_OBJECT,
+                                                properties={
+                                                    'id': openapi.Schema(type=openapi.TYPE_INTEGER),
+                                                    'name': openapi.Schema(type=openapi.TYPE_STRING)
+                                                },
+                                                required=['id', 'name']
+                                            )
+                                        ),
+                                        'dateFrom': openapi.Schema(type=openapi.TYPE_STRING),
+                                        'dateTo': openapi.Schema(type=openapi.TYPE_STRING),
+                                        'placeRegion': openapi.Schema(type=openapi.TYPE_STRING),
+                                        'place': openapi.Schema(type=openapi.TYPE_STRING),
+                                        'photos': openapi.Schema(
+                                            type=openapi.TYPE_OBJECT,
+                                            description='Event photos (nullable)',
+                                            nullable=True
+                                        ),
+                                        'distances': openapi.Schema(
+                                            type=openapi.TYPE_ARRAY,
+                                            items=openapi.Items(
+                                                type=openapi.TYPE_OBJECT,
+                                                properties={
+                                                    'name': openapi.Schema(type=openapi.TYPE_STRING)
+                                                },
+                                                required=['name']
+                                            )
+                                        ),
+                                    },
+                                    required=[
+                                        'id', 'name', 'organizer', 'dateFrom',
+                                        'dateTo', 'placeRegion', 'place', 'distances'
+                                    ]
+                                )
+                            )
+                        },
+                        required=['pagination', 'items_count', 'items']
+                    )
+                ),
                 404: openapi.Schema(
                     type=openapi.TYPE_OBJECT,
                     properties={
                         'detail': openapi.Schema(
-                            type=openapi.TYPE_STRING, description='Event not found.'
+                            type=openapi.TYPE_STRING,
+                            description='Event not found.'
                         )
                     },
-                    required=['detail'],
+                    required=['detail']
                 ),
                 500: openapi.Schema(
                     type=openapi.TYPE_OBJECT,
                     properties={
                         'detail': openapi.Schema(
                             type=openapi.TYPE_STRING,
-                            description='Internal server error while retrieving the event.',
+                            description='Internal server error while retrieving the event.'
                         )
                     },
-                    required=['detail'],
-                ),
+                    required=['detail']
+                )
             },
         }
+
 
     class PublicEventDetailView:
         get = {
@@ -144,13 +234,29 @@ class SwaggerDocs:
                             ),
                             'items': openapi.Schema(
                                 type=openapi.TYPE_ARRAY,
-                                items=openapi.Items(  # noqa
+                                items=openapi.Items(
                                     type=openapi.TYPE_OBJECT,
                                     properties={
+                                        'id': openapi.Schema(type=openapi.TYPE_INTEGER),
                                         'name': openapi.Schema(type=openapi.TYPE_STRING),
+                                        'organizer': openapi.Schema(
+                                            type=openapi.TYPE_OBJECT,
+                                            properties={
+                                                'user': openapi.Schema(type=openapi.TYPE_STRING),
+                                                'organization': openapi.Schema(type=openapi.TYPE_STRING),
+                                            },
+                                            required=['user', 'organization']
+                                        ),
                                         'competitionType': openapi.Schema(
                                             type=openapi.TYPE_ARRAY,
-                                            items=openapi.Items(type=openapi.TYPE_STRING),  # noqa
+                                            items=openapi.Items(
+                                                type=openapi.TYPE_OBJECT,
+                                                properties={
+                                                    'id': openapi.Schema(type=openapi.TYPE_INTEGER),
+                                                    'name': openapi.Schema(type=openapi.TYPE_STRING),
+                                                },
+                                                required=['id', 'name']
+                                            ),
                                         ),
                                         'dateFrom': openapi.Schema(type=openapi.TYPE_STRING),
                                         'dateTo': openapi.Schema(type=openapi.TYPE_STRING),
@@ -159,17 +265,19 @@ class SwaggerDocs:
                                         'photos': openapi.Schema(type=openapi.TYPE_OBJECT, nullable=True),
                                         'distances': openapi.Schema(
                                             type=openapi.TYPE_ARRAY,
-                                            items=openapi.Items(  # noqa
+                                            items=openapi.Items(
                                                 type=openapi.TYPE_OBJECT,
                                                 properties={
                                                     'name': openapi.Schema(type=openapi.TYPE_STRING),
                                                 },
-                                                required=['name'],
+                                                required=['name']
                                             ),
                                         ),
                                     },
                                     required=[
+                                        'id',
                                         'name',
+                                        'organizer',
                                         'competitionType',
                                         'dateFrom',
                                         'dateTo',
@@ -183,27 +291,34 @@ class SwaggerDocs:
                         required=['pagination', 'items_count', 'items'],
                     )
                 ),
-                400: openapi.Schema(
-                    type=openapi.TYPE_OBJECT,
-                    properties={
-                        'error': openapi.Schema(
-                            type=openapi.TYPE_STRING,
-                            description='Invalid filter parameters. Possible errors include invalid date format, '
-                                        'region, or distance range. For example, distance_min must be less than or '
-                                        'equal to distance_max.'
-                        )
-                    },
-                    required=['error'],
+                400: openapi.Response(
+                    description='Invalid filter parameters',
+                    schema=openapi.Schema(
+                        type=openapi.TYPE_OBJECT,
+                        properties={
+                            'error': openapi.Schema(
+                                type=openapi.TYPE_STRING,
+                                description='Invalid filter parameters. Possible errors include invalid date format, '
+                                            'region, or distance range. For example, distance_min must be less than or '
+                                            'equal to distance_max.'
+                            )
+                        },
+                        required=['error'],
+                    )
                 ),
-                500: openapi.Schema(
-                    type=openapi.TYPE_OBJECT,
-                    properties={
-                        'error': openapi.Schema(
-                            type=openapi.TYPE_STRING,
-                            description='Internal server error while processing the request.'
-                        )
-                    },
-                    required=['error'],
+                500: openapi.Response(
+                    description='Internal server error',
+                    schema=openapi.Schema(
+                        type=openapi.TYPE_OBJECT,
+                        properties={
+                            'error': openapi.Schema(
+                                type=openapi.TYPE_STRING,
+                                description='Internal server error while processing the request.'
+                            )
+                        },
+                        required=['error'],
+                    )
                 ),
             }
         }
+
