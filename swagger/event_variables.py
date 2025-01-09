@@ -23,7 +23,7 @@ class Responce:
                     type=openapi.TYPE_ARRAY,
                     items=openapi.Schema(
                         type=openapi.TYPE_OBJECT,
-                        required=['id','name'],
+                        required=['id', 'name'],
                         properties={
                             'id': openapi.Schema(
                                 type=openapi.TYPE_STRING,

@@ -12,6 +12,9 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='organization',
             name='phoneNumbers',
-            field=django.contrib.postgres.fields.ArrayField(base_field=models.CharField(max_length=20), blank=True, default=list, size=None),
+            field=django.contrib.postgres.fields
+            .ArrayField(base_field=models.CharField(max_length=20),
+                        blank=True, default=list, size=None
+                        ),
         ),
     ]

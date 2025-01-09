@@ -168,8 +168,7 @@ class DistanceEventSerializer(serializers.ModelSerializer):
         return instance
 
 
-
 class PublicDistanceEventSerializer(serializers.ModelSerializer):
     class Meta:
         model = DistanceEvent
-        fields = ['name']
+        fields = ['id', 'name']
