@@ -117,56 +117,88 @@ class SwaggerDocs:
 
         post = {
             'tags': ['Competition Type'],
-            'request_body': CompetitionTypeSerializer,
+            'request_body': openapi.Schema(
+                type=openapi.TYPE_OBJECT,
+                properties={
+                    'name': openapi.Schema(
+                        type=openapi.TYPE_STRING,
+                        description='Name of the competition type',
+                        enum=[
+                            'running', 'trail', 'ultramarathon', 'cycling',
+                            'online', 'walking', 'ocr', 'swimming', 'triathlon'
+                        ]
+                    )
+                },
+                required=['name']
+            ),
             'responses': {
-                201: CompetitionTypeSerializer,
+                201: openapi.Response(
+                    description='Successfully created competition type',
+                    schema=openapi.Schema(
+                        type=openapi.TYPE_OBJECT,
+                        properties={
+                            'id': openapi.Schema(
+                                type=openapi.TYPE_INTEGER,
+                                description='ID of the newly created competition type'
+                            ),
+                            'name': openapi.Schema(
+                                type=openapi.TYPE_STRING,
+                                description='Name of the newly created competition type'
+                            )
+                        },
+                        required=['id', 'name']
+                    )
+                ),
                 400: openapi.Schema(
                     type=openapi.TYPE_OBJECT,
                     properties={
                         'detail': openapi.Schema(
-                            type=openapi.TYPE_STRING, description='Invalid competition type data.'
+                            type=openapi.TYPE_STRING,
+                            description='Invalid competition type data.'
                         )
                     },
-                    required=['detail'],
+                    required=['detail']
                 ),
                 401: openapi.Schema(
                     type=openapi.TYPE_OBJECT,
                     properties={
                         'detail': openapi.Schema(
-                            type=openapi.TYPE_STRING, description='Authentication credentials were not provided.'
+                            type=openapi.TYPE_STRING,
+                            description='Authentication credentials were not provided.'
                         )
                     },
-                    required=['detail'],
+                    required=['detail']
                 ),
                 403: openapi.Schema(
                     type=openapi.TYPE_OBJECT,
                     properties={
                         'detail': openapi.Schema(
                             type=openapi.TYPE_STRING,
-                            description='You do not have permission to perform this action.',
+                            description='You do not have permission to perform this action.'
                         )
                     },
-                    required=['detail'],
+                    required=['detail']
                 ),
                 500: openapi.Schema(
                     type=openapi.TYPE_OBJECT,
                     properties={
                         'detail': openapi.Schema(
                             type=openapi.TYPE_STRING,
-                            description='An unexpected error occurred on the server.',
+                            description='An unexpected error occurred on the server.'
                         )
                     },
-                    required=['detail'],
+                    required=['detail']
                 ),
             },
             'operation_description': 'Create a new Competition Type.',
         }
 
+
         put = {
             'tags': ['Competition Type'],
             'request_body': CompetitionTypeSerializer,
             'responses': {
-                201: CompetitionTypeSerializer,
+                200: CompetitionTypeSerializer,
                 400: openapi.Schema(
                     type=openapi.TYPE_OBJECT,
                     properties={

@@ -135,7 +135,7 @@ class CompetitionsTypeListCreateView(APIView):
             return BadRequestError('Invalid competition type data.').get_response()
 
         serializer.save()
-        return Response(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
 class CompetitionsTypeDetailView(APIView):
