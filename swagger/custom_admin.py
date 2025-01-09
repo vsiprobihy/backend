@@ -302,33 +302,75 @@ class SwaggerDocs:
             'tags': ['Approve Organizer'],
             'operation_description': 'Retrieve all pending organizer requests.',
             'responses': {
-                200: openapi.Schema(
-                    type=openapi.TYPE_ARRAY,
-                    items=openapi.Items(
+                200: openapi.Response(
+                    description='List of pending organizer requests with pagination',
+                    schema=openapi.Schema(
                         type=openapi.TYPE_OBJECT,
                         properties={
-                            'id': openapi.Schema(type=openapi.TYPE_INTEGER, description='ID of the request'),
-                            'user': openapi.Schema(
+                            'pagination': openapi.Schema(
+                                type=openapi.TYPE_OBJECT,
+                                properties={
+                                    'next_page': openapi.Schema(
+                                        type=openapi.TYPE_STRING,
+                                        description='URL for the next page of results',
+                                        nullable=True
+                                    ),
+                                    'current_page': openapi.Schema(
+                                        type=openapi.TYPE_INTEGER,
+                                        description='Current page number'
+                                    ),
+                                    'previous_page': openapi.Schema(
+                                        type=openapi.TYPE_STRING,
+                                        description='URL for the previous page of results',
+                                        nullable=True
+                                    ),
+                                    'num_pages': openapi.Schema(
+                                        type=openapi.TYPE_INTEGER,
+                                        description='Total number of pages'
+                                    ),
+                                },
+                                required=['current_page', 'num_pages']
+                            ),
+                            'items_count': openapi.Schema(
                                 type=openapi.TYPE_INTEGER,
-                                description='ID of the user who made the request'
-                                ),
-                            'isApproved': openapi.Schema(
-                                type=openapi.TYPE_BOOLEAN,
-                                description='Approval status of the request'
-                                ),
-                            'createdAt': openapi.Schema(
-                                type=openapi.TYPE_STRING,
-                                format=openapi.FORMAT_DATETIME,
-                                description='Date and time when the request was created'
-                                ),
+                                description='Total number of requests'
+                            ),
+                            'items': openapi.Schema(
+                                type=openapi.TYPE_ARRAY,
+                                items=openapi.Items(
+                                    type=openapi.TYPE_OBJECT,
+                                    properties={
+                                        'id': openapi.Schema(
+                                            type=openapi.TYPE_INTEGER,
+                                            description='ID of the request'
+                                        ),
+                                        'user': openapi.Schema(
+                                            type=openapi.TYPE_INTEGER,
+                                            description='ID of the user who made the request'
+                                        ),
+                                        'isApproved': openapi.Schema(
+                                            type=openapi.TYPE_BOOLEAN,
+                                            description='Approval status of the request'
+                                        ),
+                                        'createdAt': openapi.Schema(
+                                            type=openapi.TYPE_STRING,
+                                            format=openapi.FORMAT_DATETIME,
+                                            description='Date and time when the request was created'
+                                        ),
+                                    },
+                                    required=['id', 'user', 'isApproved', 'createdAt']
+                                )
+                            ),
                         },
-                    ),
+                        required=['pagination', 'items_count', 'items']
+                    )
                 ),
                 401: openapi.Schema(
                     type=openapi.TYPE_OBJECT,
                     properties={
                         'detail': openapi.Schema(
-                            type=openapi.TYPE_STRING, description='Authentication credentials were not provided.'
+                            type=openapi.TYPE_STRING,
+                            description='Authentication credentials were not provided.'
                         )
                     },
                     required=['detail'],
@@ -338,7 +380,7 @@ class SwaggerDocs:
                     properties={
                         'detail': openapi.Schema(
                             type=openapi.TYPE_STRING,
-                            description='You do not have permission to perform this action.',
+                            description='You do not have permission to perform this action.'
                         )
                     },
                     required=['detail'],
@@ -348,7 +390,7 @@ class SwaggerDocs:
                     properties={
                         'detail': openapi.Schema(
                             type=openapi.TYPE_STRING,
-                            description='An unexpected error occurred on the server.',
+                            description='An unexpected error occurred on the server.'
                         )
                     },
                     required=['detail'],
