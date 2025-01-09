@@ -38,7 +38,7 @@ class SwaggerDocs:
                                         description='Total number of pages'
                                     ),
                                 },
-                                required=['next_page', 'current_page', 'num_pages']
+                                required=['current_page', 'num_pages']
                             ),
                             'items_count': openapi.Schema(
                                 type=openapi.TYPE_INTEGER,
