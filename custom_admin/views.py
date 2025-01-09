@@ -13,6 +13,7 @@ from event.serializers import CompetitionTypeSerializer, UpdateEventStatusSerial
 from swagger.custom_admin import SwaggerDocs
 from utils.constants.constants_event import STATUS_PENDING
 from utils.custom_exceptions import BadRequestError, ForbiddenError, NotFoundError, SuccessResponse
+from utils.pagination import Pagination
 
 
 class ApproveOrganizerView(APIView):
@@ -40,14 +41,22 @@ class ApproveOrganizerView(APIView):
 class OrganizerRequestsListView(APIView):
     permission_classes = [IsAuthenticated, IsAdmin]
 
-    @swagger_auto_schema(**SwaggerDocs.OrganizerRequestsListView.get)
+    @swagger_auto_schema(**SwaggerDocs.ApproveOrganizerView.get)
     def get(self, request):
         if not request.user.is_superuser:
             return ForbiddenError('You do not have permission to perform this action.').get_response()
 
         organizer_requests = OrganizerRequest.objects.filter(isApproved=False)
-        serializer = OrganizerRequestSerializer(organizer_requests, many=True)
 
+        paginator = Pagination()
+        paginator.page_size = 10
+        paginated_requests = paginator.paginate_queryset(organizer_requests, request)
+
+        if paginated_requests is not None:
+            serializer = OrganizerRequestSerializer(paginated_requests, many=True)
+            return paginator.get_paginated_response(serializer.data)
+
+        serializer = OrganizerRequestSerializer(organizer_requests, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
@@ -81,9 +90,18 @@ class UpdateEventStatusView(APIView):
 class PendingEventsView(APIView):
     permission_classes = [IsAuthenticated, IsAdmin]
 
-    @swagger_auto_schema(**SwaggerDocs.PendingEventsView.get)
+    @swagger_auto_schema(**SwaggerDocs.UpdateEventStatusView.get)
     def get(self, request):
         events = Event.objects.filter(status=STATUS_PENDING)
+
+        paginator = Pagination()
+        paginator.page_size = 10
+        paginated_events = paginator.paginate_queryset(events, request)
+
+        if paginated_events is not None:
+            serializer = RequestStatusEventSerializer(paginated_events, many=True)
+            return paginator.get_paginated_response(serializer.data)
+
         serializer = RequestStatusEventSerializer(events, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -96,12 +114,17 @@ class CompetitionsTypeListCreateView(APIView):
 
     @swagger_auto_schema(**SwaggerDocs.CompetitionsTypeView.get)
     def get(self, request):
-        competition_types = CompetitionType.objects.all()
-        if not competition_types:
-            return NotFoundError('Competition type not found.').get_response()
+        competition_types = CompetitionType.objects.all().order_by('-id')
+
+        paginator = Pagination()
+        paginator.page_size = 12
+        paginated_competition_types = paginator.paginate_queryset(competition_types, request)
+
+        if paginated_competition_types is not None:
+            serializer = CompetitionTypeSerializer(paginated_competition_types, many=True)
+            return paginator.get_paginated_response(serializer.data)
 
         serializer = CompetitionTypeSerializer(competition_types, many=True)
-
         return Response(serializer.data)
 
     @swagger_auto_schema(**SwaggerDocs.CompetitionsTypeView.post)
@@ -112,7 +135,7 @@ class CompetitionsTypeListCreateView(APIView):
             return BadRequestError('Invalid competition type data.').get_response()
 
         serializer.save()
-        return Response(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
 class CompetitionsTypeDetailView(APIView):

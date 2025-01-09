@@ -71,7 +71,7 @@ class UserDistanceRegistrationView(APIView):
 class UserDistanceRegistrationsView(APIView):
     permission_classes = [IsAuthenticated]
 
-    @swagger_auto_schema(**SwaggerDocs.UserRegistrationsViewSwagger.get)
+    @swagger_auto_schema(**SwaggerDocs.UserDistanceRegistrationView.get)
     def get(self, request):
         status_filter = request.query_params.get('status')
         registrations = UserDistanceRegistration.objects.filter(user=request.user)
@@ -118,6 +118,14 @@ class AdditionalProfileListView(APIView):
     @swagger_auto_schema(**SwaggerDocs.AdditionalProfileList.get)
     def get(self, request):
         profiles = request.user.additionalProfiles.all()
+
+        paginator = Pagination()
+        paginated_profiles = paginator.paginate_queryset(profiles, request)
+
+        if paginated_profiles is not None:
+            serializer = AdditionalProfileSerializer(paginated_profiles, many=True)
+            return paginator.get_paginated_response(serializer.data)
+
         serializer = AdditionalProfileSerializer(profiles, many=True)
         return Response(serializer.data)
 
@@ -220,6 +228,10 @@ class LikeEventView(APIView):
                     {'detail': 'Event is not available for liking.'},
                     status=status.HTTP_403_FORBIDDEN,
                 )
+
+            if EventLike.objects.filter(user=request.user, event=event).exists():
+                return Response({'detail': 'Event already liked.'}, status=status.HTTP_400_BAD_REQUEST)
+
             EventLike.objects.like_event(request.user, event)
             return Response({'detail': 'Event liked successfully'}, status=status.HTTP_200_OK)
         except Event.DoesNotExist:
@@ -229,6 +241,10 @@ class LikeEventView(APIView):
     def delete(self, request, event_id):
         try:
             event = Event.objects.get(id=event_id)
+
+            if not EventLike.objects.filter(user=request.user, event=event).exists():
+                return Response({'detail': 'Event already unliked.'}, status=status.HTTP_400_BAD_REQUEST)
+
             EventLike.objects.unlike_event(request.user, event)
             return Response({'detail': 'Event unliked successfully'}, status=status.HTTP_200_OK)
         except Event.DoesNotExist:
