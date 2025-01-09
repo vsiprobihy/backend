@@ -13,13 +13,11 @@ class UserDistanceRegistrationSerializer(serializers.ModelSerializer):
         many=True, queryset=AdditionalItemEvent.objects.all(), required=False
     )
 
-    # TODO: Add startingNumber
-    # startingNumber
     class Meta:
         model = UserDistanceRegistration
         fields = [
             'id', 'registrationDate', 'email', 'firstName', 'lastName', 'firstNameEng', 'lastNameEng',
-            'gender', 'dateOfBirth', 'tShirtSize', 'country', 'city', 'phoneNumber', 'sportsClub',
+            'gender', 'startingNumber', 'dateOfBirth', 'tShirtSize', 'country', 'city', 'phoneNumber', 'sportsClub',
             'emergencyContactName', 'emergencyContactPhone', 'promoCode', 'additionalItems'
         ]
         read_only_fields = ['user', 'distance']

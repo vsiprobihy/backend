@@ -66,7 +66,6 @@ class SwaggerDocs:
             },
         }
 
-
     class UserDistanceRegistrationView:
         post = {
             'tags': ['User Distance Registration'],
@@ -164,7 +163,6 @@ class SwaggerDocs:
                 ),
             },
         }
-
 
     class UserRegistrationsViewSwagger:
         get = {

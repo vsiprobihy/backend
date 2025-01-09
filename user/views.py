@@ -43,8 +43,15 @@ class UserDistanceRegistrationView(APIView):
         if UserDistanceRegistration.objects.filter(user=user, distance=distance).exists():
             return BadRequestError('You are already registered for this distance.').get_response()
 
-        # TODO: Add startingNumber
-        # startingNumber
+        assigned_numbers = (
+            UserDistanceRegistration.objects.filter(distance=distance)
+            .values_list("startingNumber", flat=True)
+        )
+        available_numbers = set(range(distance.startNumberFrom, distance.startNumberTo + 1)) - set(assigned_numbers)
+        if not available_numbers:
+            return BadRequestError('No available starting numbers for this distance.').get_response()
+
+        starting_number = min(available_numbers)
 
         promo_code_id = request.data.get('promoCode')
         promo_code = None
@@ -61,7 +68,12 @@ class UserDistanceRegistrationView(APIView):
 
         serializer = UserDistanceRegistrationSerializer(data=request.data)
         if serializer.is_valid():
-            registration = serializer.save(user=user, distance=distance, promoCode=promo_code)
+            registration = serializer.save(
+                user=user,
+                distance=distance,
+                promoCode=promo_code,
+                startingNumber=starting_number
+            )
             registration.additionalItems.set(additional_items)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         else:
