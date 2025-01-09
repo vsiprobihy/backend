@@ -71,7 +71,7 @@ class UserDistanceRegistrationView(APIView):
 class UserDistanceRegistrationsView(APIView):
     permission_classes = [IsAuthenticated]
 
-    @swagger_auto_schema(**SwaggerDocs.UserRegistrationsViewSwagger.get)
+    @swagger_auto_schema(**SwaggerDocs.UserDistanceRegistrationView.get)
     def get(self, request):
         status_filter = request.query_params.get('status')
         registrations = UserDistanceRegistration.objects.filter(user=request.user)
