@@ -85,6 +85,15 @@ class PendingEventsView(APIView):
     @swagger_auto_schema(**SwaggerDocs.PendingEventsView.get)
     def get(self, request):
         events = Event.objects.filter(status=STATUS_PENDING)
+
+        paginator = Pagination()
+        paginator.page_size = 10
+        paginated_events = paginator.paginate_queryset(events, request)
+
+        if paginated_events is not None:
+            serializer = RequestStatusEventSerializer(paginated_events, many=True)
+            return paginator.get_paginated_response(serializer.data)
+
         serializer = RequestStatusEventSerializer(events, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
