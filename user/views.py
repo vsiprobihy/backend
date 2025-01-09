@@ -228,6 +228,10 @@ class LikeEventView(APIView):
                     {'detail': 'Event is not available for liking.'},
                     status=status.HTTP_403_FORBIDDEN,
                 )
+
+            if EventLike.objects.filter(user=request.user, event=event).exists():
+                return Response({'detail': 'Event already liked.'}, status=status.HTTP_400_BAD_REQUEST)
+
             EventLike.objects.like_event(request.user, event)
             return Response({'detail': 'Event liked successfully'}, status=status.HTTP_200_OK)
         except Event.DoesNotExist:
@@ -237,6 +241,10 @@ class LikeEventView(APIView):
     def delete(self, request, event_id):
         try:
             event = Event.objects.get(id=event_id)
+
+            if not EventLike.objects.filter(user=request.user, event=event).exists():
+                return Response({'detail': 'Event already unliked.'}, status=status.HTTP_400_BAD_REQUEST)
+
             EventLike.objects.unlike_event(request.user, event)
             return Response({'detail': 'Event unliked successfully'}, status=status.HTTP_200_OK)
         except Event.DoesNotExist:
