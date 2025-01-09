@@ -118,6 +118,14 @@ class AdditionalProfileListView(APIView):
     @swagger_auto_schema(**SwaggerDocs.AdditionalProfileList.get)
     def get(self, request):
         profiles = request.user.additionalProfiles.all()
+
+        paginator = Pagination()
+        paginated_profiles = paginator.paginate_queryset(profiles, request)
+
+        if paginated_profiles is not None:
+            serializer = AdditionalProfileSerializer(paginated_profiles, many=True)
+            return paginator.get_paginated_response(serializer.data)
+
         serializer = AdditionalProfileSerializer(profiles, many=True)
         return Response(serializer.data)
 
