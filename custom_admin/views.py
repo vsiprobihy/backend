@@ -47,8 +47,16 @@ class OrganizerRequestsListView(APIView):
             return ForbiddenError('You do not have permission to perform this action.').get_response()
 
         organizer_requests = OrganizerRequest.objects.filter(isApproved=False)
-        serializer = OrganizerRequestSerializer(organizer_requests, many=True)
 
+        paginator = Pagination()
+        paginator.page_size = 10
+        paginated_requests = paginator.paginate_queryset(organizer_requests, request)
+
+        if paginated_requests is not None:
+            serializer = OrganizerRequestSerializer(paginated_requests, many=True)
+            return paginator.get_paginated_response(serializer.data)
+
+        serializer = OrganizerRequestSerializer(organizer_requests, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
