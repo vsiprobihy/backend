@@ -9,6 +9,9 @@ class CustomUserManager(BaseUserManager):
             raise ValueError('The given email must be set')
         if role not in ['user', 'organizer', 'admin']:
             raise ValueError('Invalid role')
+        if role == 'user' and not extra_fields.get('dateOfBirth'):
+            raise ValueError('The date of birth must be set for regular users')
+
         email = self.normalize_email(email)
         user = self.model(email=email, role=role, **extra_fields)
         user.set_password(password)
@@ -31,4 +34,5 @@ class CustomUserManager(BaseUserManager):
         if extra_fields.get('is_superuser') is not True:
             raise ValueError('Superuser must have is_superuser=True.')
 
+        extra_fields.setdefault('dateOfBirth', None)
         return self._create_user(email, password, role, **extra_fields)
