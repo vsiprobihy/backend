@@ -296,54 +296,8 @@ class SwaggerDocs:
             },
         }
 
-    class ApproveOrganizerView:
-        post = {
-            'tags': ['Approve Organizer'],
-            'operation_description': 'Approve Organizer',
-            'responses': {
-                200: 'Request approved and user is now an organizer.',
-                401: openapi.Schema(
-                    type=openapi.TYPE_OBJECT,
-                    properties={
-                        'detail': openapi.Schema(
-                            type=openapi.TYPE_STRING, description='Authentication credentials were not provided.'
-                        )
-                    },
-                    required=['detail'],
-                ),
-                403: openapi.Schema(
-                    type=openapi.TYPE_OBJECT,
-                    properties={
-                        'detail': openapi.Schema(
-                            type=openapi.TYPE_STRING,
-                            description='You do not have permission to perform this action.',
-                        )
-                    },
-                    required=['detail'],
-                ),
-                404: openapi.Schema(
-                    type=openapi.TYPE_OBJECT,
-                    properties={
-                        'detail': openapi.Schema(
-                            type=openapi.TYPE_STRING, description='Request not found.'
-                        )
-                    },
-                    required=['detail'],
-                ),
-                500: openapi.Schema(
-                    type=openapi.TYPE_OBJECT,
-                    properties={
-                        'detail': openapi.Schema(
-                            type=openapi.TYPE_STRING,
-                            description='An unexpected error occurred on the server.',
-                        )
-                    },
-                    required=['detail'],
-                ),
-            },
-        }
 
-    class OrganizerRequestsListView:
+    class ApproveOrganizerView:
         get = {
             'tags': ['Approve Organizer'],
             'operation_description': 'Retrieve all pending organizer requests.',
@@ -402,46 +356,12 @@ class SwaggerDocs:
             },
         }
 
-    class UpdateEventStatusView:
+
         post = {
-            'tags': ['Approve Event'],
-            'request_body': openapi.Schema(
-                type=openapi.TYPE_OBJECT,
-                properties={
-                    'status': openapi.Schema(
-                        type=openapi.TYPE_STRING,
-                        description='New status of the event (e.g., pending, published, unpublished)',
-                        enum=['pending', 'published', 'unpublished'],
-                    ),
-                },
-                required=['status'],
-            ),
-            'operation_description': 'Update the status of an event by its ID.',
+            'tags': ['Approve Organizer'],
+            'operation_description': 'Approve Organizer',
             'responses': {
-                200: openapi.Schema(
-                    type=openapi.TYPE_OBJECT,
-                    properties={
-                        'message': openapi.Schema(
-                            type=openapi.TYPE_STRING,
-                            description='Confirmation message that the event status was successfully updated.'
-                        ),
-                    },
-                    required=['message'],
-                ),
-                400: openapi.Schema(
-                    type=openapi.TYPE_OBJECT,
-                    properties={
-                        'detail': openapi.Schema(
-                            type=openapi.TYPE_STRING,
-                            description='Error message indicating why the request was invalid.',
-                            enum=[
-                                'Status is not a valid choice.',
-                                'The event status is already set to [status]. No changes were made.',
-                            ]
-                        )
-                    },
-                    required=['detail'],
-                ),
+                200: 'Request approved and user is now an organizer.',
                 401: openapi.Schema(
                     type=openapi.TYPE_OBJECT,
                     properties={
@@ -465,7 +385,17 @@ class SwaggerDocs:
                     type=openapi.TYPE_OBJECT,
                     properties={
                         'detail': openapi.Schema(
-                            type=openapi.TYPE_STRING, description='Event not found.'
+                            type=openapi.TYPE_STRING, description='Request not found.'
+                        )
+                    },
+                    required=['detail'],
+                ),
+                500: openapi.Schema(
+                    type=openapi.TYPE_OBJECT,
+                    properties={
+                        'detail': openapi.Schema(
+                            type=openapi.TYPE_STRING,
+                            description='An unexpected error occurred on the server.',
                         )
                     },
                     required=['detail'],
@@ -473,7 +403,8 @@ class SwaggerDocs:
             },
         }
 
-    class PendingEventsView:
+
+    class UpdateEventStatusView:
         get = {
             'tags': ['Approve Event'],
             'operation_description': 'Retrieve all events with status "pending".',
@@ -540,6 +471,77 @@ class SwaggerDocs:
                         'detail': openapi.Schema(
                             type=openapi.TYPE_STRING,
                             description='An unexpected error occurred on the server.'
+                        )
+                    },
+                    required=['detail'],
+                ),
+            },
+        }
+
+
+        post = {
+            'tags': ['Approve Event'],
+            'request_body': openapi.Schema(
+                type=openapi.TYPE_OBJECT,
+                properties={
+                    'status': openapi.Schema(
+                        type=openapi.TYPE_STRING,
+                        description='New status of the event (e.g., pending, published, unpublished)',
+                        enum=['pending', 'published', 'unpublished'],
+                    ),
+                },
+                required=['status'],
+            ),
+            'operation_description': 'Update the status of an event by its ID.',
+            'responses': {
+                200: openapi.Schema(
+                    type=openapi.TYPE_OBJECT,
+                    properties={
+                        'message': openapi.Schema(
+                            type=openapi.TYPE_STRING,
+                            description='Confirmation message that the event status was successfully updated.'
+                        ),
+                    },
+                    required=['message'],
+                ),
+                400: openapi.Schema(
+                    type=openapi.TYPE_OBJECT,
+                    properties={
+                        'detail': openapi.Schema(
+                            type=openapi.TYPE_STRING,
+                            description='Error message indicating why the request was invalid.',
+                            enum=[
+                                'Status is not a valid choice.',
+                                'The event status is already set to [status]. No changes were made.',
+                            ]
+                        )
+                    },
+                    required=['detail'],
+                ),
+                401: openapi.Schema(
+                    type=openapi.TYPE_OBJECT,
+                    properties={
+                        'detail': openapi.Schema(
+                            type=openapi.TYPE_STRING, description='Authentication credentials were not provided.'
+                        )
+                    },
+                    required=['detail'],
+                ),
+                403: openapi.Schema(
+                    type=openapi.TYPE_OBJECT,
+                    properties={
+                        'detail': openapi.Schema(
+                            type=openapi.TYPE_STRING,
+                            description='You do not have permission to perform this action.',
+                        )
+                    },
+                    required=['detail'],
+                ),
+                404: openapi.Schema(
+                    type=openapi.TYPE_OBJECT,
+                    properties={
+                        'detail': openapi.Schema(
+                            type=openapi.TYPE_STRING, description='Event not found.'
                         )
                     },
                     required=['detail'],

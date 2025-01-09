@@ -41,7 +41,7 @@ class ApproveOrganizerView(APIView):
 class OrganizerRequestsListView(APIView):
     permission_classes = [IsAuthenticated, IsAdmin]
 
-    @swagger_auto_schema(**SwaggerDocs.OrganizerRequestsListView.get)
+    @swagger_auto_schema(**SwaggerDocs.ApproveOrganizerView.get)
     def get(self, request):
         if not request.user.is_superuser:
             return ForbiddenError('You do not have permission to perform this action.').get_response()
@@ -90,7 +90,7 @@ class UpdateEventStatusView(APIView):
 class PendingEventsView(APIView):
     permission_classes = [IsAuthenticated, IsAdmin]
 
-    @swagger_auto_schema(**SwaggerDocs.PendingEventsView.get)
+    @swagger_auto_schema(**SwaggerDocs.UpdateEventStatusView.get)
     def get(self, request):
         events = Event.objects.filter(status=STATUS_PENDING)
 
