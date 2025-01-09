@@ -7,49 +7,113 @@ class SwaggerDocs:
     class CompetitionsTypeView:
         get = {
             'tags': ['Competition Type'],
-            'operation_description': 'Get an Competition Type',
+            'operation_description': 'Get a Competition Type',
+            'manual_parameters': [
+                openapi.Parameter(
+                    'page',
+                    openapi.IN_QUERY,
+                    description='Page number for pagination',
+                    type=openapi.TYPE_INTEGER
+                )
+            ],
             'responses': {
-                200: CompetitionTypeSerializer,
+                200: openapi.Response(
+                    description='List of competition types with pagination',
+                    schema=openapi.Schema(
+                        type=openapi.TYPE_OBJECT,
+                        properties={
+                            'pagination': openapi.Schema(
+                                type=openapi.TYPE_OBJECT,
+                                properties={
+                                    'next_page': openapi.Schema(
+                                        type=openapi.TYPE_STRING,
+                                        description='URL to the next page or null if there is no next page',
+                                        nullable=True
+                                    ),
+                                    'current_page': openapi.Schema(
+                                        type=openapi.TYPE_INTEGER,
+                                        description='The current page number'
+                                    ),
+                                    'previous_page': openapi.Schema(
+                                        type=openapi.TYPE_STRING,
+                                        description='URL to the previous page or null if there is no previous page',
+                                        nullable=True
+                                    ),
+                                    'num_pages': openapi.Schema(
+                                        type=openapi.TYPE_INTEGER,
+                                        description='Total number of pages'
+                                    ),
+                                },
+                                required=['current_page', 'num_pages']
+                            ),
+                            'items_count': openapi.Schema(
+                                type=openapi.TYPE_INTEGER,
+                                description='Total number of items'
+                            ),
+                            'items': openapi.Schema(
+                                type=openapi.TYPE_ARRAY,
+                                items=openapi.Items(
+                                    type=openapi.TYPE_OBJECT,
+                                    properties={
+                                        'id': openapi.Schema(
+                                            type=openapi.TYPE_INTEGER,
+                                            description='ID of the competition type'
+                                        ),
+                                        'name': openapi.Schema(
+                                            type=openapi.TYPE_STRING,
+                                            description='Name of the competition type'
+                                        )
+                                    },
+                                    required=['id', 'name']
+                                )
+                            )
+                        },
+                        required=['pagination', 'items_count', 'items']
+                    )
+                ),
                 401: openapi.Schema(
                     type=openapi.TYPE_OBJECT,
                     properties={
                         'detail': openapi.Schema(
-                            type=openapi.TYPE_STRING, description='Authentication credentials were not provided.'
+                            type=openapi.TYPE_STRING,
+                            description='Authentication credentials were not provided.'
                         )
                     },
-                    required=['detail'],
+                    required=['detail']
                 ),
                 403: openapi.Schema(
                     type=openapi.TYPE_OBJECT,
                     properties={
                         'detail': openapi.Schema(
                             type=openapi.TYPE_STRING,
-                            description='You do not have permission to perform this action.',
+                            description='You do not have permission to perform this action.'
                         )
                     },
-                    required=['detail'],
+                    required=['detail']
                 ),
                 404: openapi.Schema(
                     type=openapi.TYPE_OBJECT,
                     properties={
                         'detail': openapi.Schema(
-                            type=openapi.TYPE_STRING, description='Competition type not found.'
+                            type=openapi.TYPE_STRING,
+                            description='Competition type not found.'
                         )
                     },
-                    required=['detail'],
+                    required=['detail']
                 ),
                 500: openapi.Schema(
                     type=openapi.TYPE_OBJECT,
                     properties={
                         'detail': openapi.Schema(
                             type=openapi.TYPE_STRING,
-                            description='An unexpected error occurred on the server.',
+                            description='An unexpected error occurred on the server.'
                         )
                     },
-                    required=['detail'],
+                    required=['detail']
                 ),
             },
         }
+
 
         post = {
             'tags': ['Competition Type'],
