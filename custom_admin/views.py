@@ -13,6 +13,7 @@ from event.serializers import CompetitionTypeSerializer, UpdateEventStatusSerial
 from swagger.custom_admin import SwaggerDocs
 from utils.constants.constants_event import STATUS_PENDING
 from utils.custom_exceptions import BadRequestError, ForbiddenError, NotFoundError, SuccessResponse
+from utils.pagination import Pagination
 
 
 class ApproveOrganizerView(APIView):
@@ -96,12 +97,17 @@ class CompetitionsTypeListCreateView(APIView):
 
     @swagger_auto_schema(**SwaggerDocs.CompetitionsTypeView.get)
     def get(self, request):
-        competition_types = CompetitionType.objects.all()
-        if not competition_types:
-            return NotFoundError('Competition type not found.').get_response()
+        competition_types = CompetitionType.objects.all().order_by('-id')
+
+        paginator = Pagination()
+        paginator.page_size = 12
+        paginated_competition_types = paginator.paginate_queryset(competition_types, request)
+
+        if paginated_competition_types is not None:
+            serializer = CompetitionTypeSerializer(paginated_competition_types, many=True)
+            return paginator.get_paginated_response(serializer.data)
 
         serializer = CompetitionTypeSerializer(competition_types, many=True)
-
         return Response(serializer.data)
 
     @swagger_auto_schema(**SwaggerDocs.CompetitionsTypeView.post)
