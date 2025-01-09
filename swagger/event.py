@@ -366,10 +366,48 @@ class SwaggerDocs:
                         },
                     ),
                 ),
-                404: 'Events not found',
-            },
+                401: openapi.Schema(
+                    type=openapi.TYPE_OBJECT,
+                    properties={
+                        'detail': openapi.Schema(
+                            type=openapi.TYPE_STRING,
+                            description='Authentication credentials were not provided.'
+                        )
+                    },
+                    required=['detail'],
+                ),
+                403: openapi.Schema(
+                    type=openapi.TYPE_OBJECT,
+                    properties={
+                        'detail': openapi.Schema(
+                            type=openapi.TYPE_STRING,
+                            description='You do not have permission to perform this action.'
+                        )
+                    },
+                    required=['detail'],
+                ),
+                404: openapi.Schema(
+                    type=openapi.TYPE_OBJECT,
+                    properties={
+                        'detail': openapi.Schema(
+                            type=openapi.TYPE_STRING,
+                            description='Organization not found.'
+                        )
+                    },
+                    required=['detail'],
+                ),
+                500: openapi.Schema(
+                    type=openapi.TYPE_OBJECT,
+                    properties={
+                        'detail': openapi.Schema(
+                            type=openapi.TYPE_STRING,
+                            description='An unexpected error occurred on the server.'
+                        )
+                    },
+                    required=['detail'],
+                ),
+            }
         }
-
 
         post = {
             'tags': ['Event'],
@@ -394,6 +432,46 @@ class SwaggerDocs:
                     },
                     required=['detail'],
                 ),
+                401: openapi.Schema(
+                    type=openapi.TYPE_OBJECT,
+                    properties={
+                        'detail': openapi.Schema(
+                            type=openapi.TYPE_STRING,
+                            description='Authentication credentials were not provided.'
+                        )
+                    },
+                    required=['detail'],
+                ),
+                403: openapi.Schema(
+                    type=openapi.TYPE_OBJECT,
+                    properties={
+                        'detail': openapi.Schema(
+                            type=openapi.TYPE_STRING,
+                            description='You do not have permission to perform this action.'
+                        )
+                    },
+                    required=['detail'],
+                ),
+                404: openapi.Schema(
+                    type=openapi.TYPE_OBJECT,
+                    properties={
+                        'detail': openapi.Schema(
+                            type=openapi.TYPE_STRING,
+                            description='Organization not found.'
+                        )
+                    },
+                    required=['detail'],
+                ),
+                500: openapi.Schema(
+                    type=openapi.TYPE_OBJECT,
+                    properties={
+                        'detail': openapi.Schema(
+                            type=openapi.TYPE_STRING,
+                            description='An unexpected error occurred on the server.'
+                        )
+                    },
+                    required=['detail'],
+                ),
             },
             'operation_description': 'Create a new event with all related details including organizer, additional items, and distances.',  # noqa: E501
         }
@@ -403,7 +481,46 @@ class SwaggerDocs:
             'tags': ['Event'],
             'responses': {
                 200: Responce.EventResponse,
-                404: 'Event not found',
+                401: openapi.Schema(
+                    type=openapi.TYPE_OBJECT,
+                    properties={
+                        'detail': openapi.Schema(
+                            type=openapi.TYPE_STRING,
+                            description='Authentication credentials were not provided.'
+                        )
+                    },
+                    required=['detail'],
+                ),
+                403: openapi.Schema(
+                    type=openapi.TYPE_OBJECT,
+                    properties={
+                        'detail': openapi.Schema(
+                            type=openapi.TYPE_STRING,
+                            description='You do not have permission to perform this action.'
+                        )
+                    },
+                    required=['detail'],
+                ),
+                404: openapi.Schema(
+                    type=openapi.TYPE_OBJECT,
+                    properties={
+                        'detail': openapi.Schema(
+                            type=openapi.TYPE_STRING,
+                            description='Organization not found.'
+                        )
+                    },
+                    required=['detail'],
+                ),
+                500: openapi.Schema(
+                    type=openapi.TYPE_OBJECT,
+                    properties={
+                        'detail': openapi.Schema(
+                            type=openapi.TYPE_STRING,
+                            description='An unexpected error occurred on the server.'
+                        )
+                    },
+                    required=['detail'],
+                ),
             },
             'operation_description': 'Retrieve event details by ID.',
         }
@@ -413,7 +530,64 @@ class SwaggerDocs:
             'request_body': Request.EventRequestBody,
             'responses': {
                 200: Responce.EventResponse,
-                404: 'Event not found',
+                400: openapi.Schema(
+                    type=openapi.TYPE_OBJECT,
+                    properties={
+                        'detail': openapi.Schema(
+                            type=openapi.TYPE_STRING, description='Bad request'
+                        )
+                    },
+                    required=['detail'],
+                ),
+                409: openapi.Schema(
+                    type=openapi.TYPE_OBJECT,
+                    properties={
+                        'detail': openapi.Schema(
+                            type=openapi.TYPE_STRING, description='The competition type does not exist.'
+                        )
+                    },
+                    required=['detail'],
+                ),
+                401: openapi.Schema(
+                    type=openapi.TYPE_OBJECT,
+                    properties={
+                        'detail': openapi.Schema(
+                            type=openapi.TYPE_STRING,
+                            description='Authentication credentials were not provided.'
+                        )
+                    },
+                    required=['detail'],
+                ),
+                403: openapi.Schema(
+                    type=openapi.TYPE_OBJECT,
+                    properties={
+                        'detail': openapi.Schema(
+                            type=openapi.TYPE_STRING,
+                            description='You do not have permission to perform this action.'
+                        )
+                    },
+                    required=['detail'],
+                ),
+                404: openapi.Schema(
+                    type=openapi.TYPE_OBJECT,
+                    properties={
+                        'detail': openapi.Schema(
+                            type=openapi.TYPE_STRING,
+                            description='Organization not found.'
+                        )
+                    },
+                    required=['detail'],
+                ),
+                500: openapi.Schema(
+                    type=openapi.TYPE_OBJECT,
+                    properties={
+                        'detail': openapi.Schema(
+                            type=openapi.TYPE_STRING,
+                            description='An unexpected error occurred on the server.'
+                        )
+                    },
+                    required=['detail'],
+                ),
             },
             'operation_description': 'Update event details without organizer, additional_items, or distances fields.',
         }
@@ -423,7 +597,64 @@ class SwaggerDocs:
             'request_body': Request.EventRequestBody,
             'responses': {
                 200: Responce.EventResponse,
-                404: 'Event not found',
+                400: openapi.Schema(
+                    type=openapi.TYPE_OBJECT,
+                    properties={
+                        'detail': openapi.Schema(
+                            type=openapi.TYPE_STRING, description='Bad request'
+                        )
+                    },
+                    required=['detail'],
+                ),
+                409: openapi.Schema(
+                    type=openapi.TYPE_OBJECT,
+                    properties={
+                        'detail': openapi.Schema(
+                            type=openapi.TYPE_STRING, description='The competition type does not exist.'
+                        )
+                    },
+                    required=['detail'],
+                ),
+                401: openapi.Schema(
+                    type=openapi.TYPE_OBJECT,
+                    properties={
+                        'detail': openapi.Schema(
+                            type=openapi.TYPE_STRING,
+                            description='Authentication credentials were not provided.'
+                        )
+                    },
+                    required=['detail'],
+                ),
+                403: openapi.Schema(
+                    type=openapi.TYPE_OBJECT,
+                    properties={
+                        'detail': openapi.Schema(
+                            type=openapi.TYPE_STRING,
+                            description='You do not have permission to perform this action.'
+                        )
+                    },
+                    required=['detail'],
+                ),
+                404: openapi.Schema(
+                    type=openapi.TYPE_OBJECT,
+                    properties={
+                        'detail': openapi.Schema(
+                            type=openapi.TYPE_STRING,
+                            description='Organization not found.'
+                        )
+                    },
+                    required=['detail'],
+                ),
+                500: openapi.Schema(
+                    type=openapi.TYPE_OBJECT,
+                    properties={
+                        'detail': openapi.Schema(
+                            type=openapi.TYPE_STRING,
+                            description='An unexpected error occurred on the server.'
+                        )
+                    },
+                    required=['detail'],
+                ),
             },
             'operation_description': 'Partially update event details without organizer, additional_items, or distances fields.',  # noqa: E501
         }
@@ -432,7 +663,46 @@ class SwaggerDocs:
             'tags': ['Event'],
             'responses': {
                 204: 'Event deleted successfully',
-                404: 'Event not found',
+                401: openapi.Schema(
+                    type=openapi.TYPE_OBJECT,
+                    properties={
+                        'detail': openapi.Schema(
+                            type=openapi.TYPE_STRING,
+                            description='Authentication credentials were not provided.'
+                        )
+                    },
+                    required=['detail'],
+                ),
+                403: openapi.Schema(
+                    type=openapi.TYPE_OBJECT,
+                    properties={
+                        'detail': openapi.Schema(
+                            type=openapi.TYPE_STRING,
+                            description='You do not have permission to perform this action.'
+                        )
+                    },
+                    required=['detail'],
+                ),
+                404: openapi.Schema(
+                    type=openapi.TYPE_OBJECT,
+                    properties={
+                        'detail': openapi.Schema(
+                            type=openapi.TYPE_STRING,
+                            description='Organization not found.'
+                        )
+                    },
+                    required=['detail'],
+                ),
+                500: openapi.Schema(
+                    type=openapi.TYPE_OBJECT,
+                    properties={
+                        'detail': openapi.Schema(
+                            type=openapi.TYPE_STRING,
+                            description='An unexpected error occurred on the server.'
+                        )
+                    },
+                    required=['detail'],
+                ),
             },
             'operation_description': 'Delete an event by ID.',
         }
