@@ -409,41 +409,85 @@ class SwaggerDocs:
             'tags': ['Approve Event'],
             'operation_description': 'Retrieve all events with status "pending".',
             'responses': {
-                200: openapi.Schema(
-                    type=openapi.TYPE_ARRAY,
-                    items=openapi.Items(
+                200: openapi.Response(
+                    description='List of events with pagination',
+                    schema=openapi.Schema(
                         type=openapi.TYPE_OBJECT,
                         properties={
-                            'id': openapi.Schema(
-                                type=openapi.TYPE_INTEGER, description='ID of the event'
+                            'pagination': openapi.Schema(
+                                type=openapi.TYPE_OBJECT,
+                                properties={
+                                    'next_page': openapi.Schema(
+                                        type=openapi.TYPE_STRING,
+                                        description='URL for the next page of results',
+                                        nullable=True
+                                    ),
+                                    'current_page': openapi.Schema(
+                                        type=openapi.TYPE_INTEGER,
+                                        description='Current page number'
+                                    ),
+                                    'previous_page': openapi.Schema(
+                                        type=openapi.TYPE_STRING,
+                                        description='URL for the previous page of results',
+                                        nullable=True
+                                    ),
+                                    'num_pages': openapi.Schema(
+                                        type=openapi.TYPE_INTEGER,
+                                        description='Total number of pages'
+                                    ),
+                                },
+                                required=['current_page', 'num_pages']
                             ),
-                            'name': openapi.Schema(
-                                type=openapi.TYPE_STRING, description='Name of the event'
+                            'items_count': openapi.Schema(
+                                type=openapi.TYPE_INTEGER,
+                                description='Total number of events'
                             ),
-                            'organizer': openapi.Schema(
-                                type=openapi.TYPE_STRING, description='Organizer of the event'
-                            ),
-                            'competitionType': openapi.Schema(
+                            'items': openapi.Schema(
                                 type=openapi.TYPE_ARRAY,
-                                items=openapi.Items(type=openapi.TYPE_STRING),
-                                description='Types of competitions associated with the event'
-                            ),
-                            'dateFrom': openapi.Schema(
-                                type=openapi.TYPE_STRING,
-                                format=openapi.FORMAT_DATE,
-                                description='Start date of the event'
-                            ),
-                            'dateTo': openapi.Schema(
-                                type=openapi.TYPE_STRING,
-                                format=openapi.FORMAT_DATE,
-                                description='End date of the event'
-                            ),
-                            'status': openapi.Schema(
-                                type=openapi.TYPE_STRING, description='Status of the event'
+                                items=openapi.Items(
+                                    type=openapi.TYPE_OBJECT,
+                                    properties={
+                                        'id': openapi.Schema(
+                                            type=openapi.TYPE_INTEGER,
+                                            description='ID of the event'
+                                        ),
+                                        'name': openapi.Schema(
+                                            type=openapi.TYPE_STRING,
+                                            description='Name of the event'
+                                        ),
+                                        'organizer': openapi.Schema(
+                                            type=openapi.TYPE_STRING,
+                                            description='Organizer of the event'
+                                        ),
+                                        'competitionType': openapi.Schema(
+                                            type=openapi.TYPE_ARRAY,
+                                            items=openapi.Items(type=openapi.TYPE_INTEGER),
+                                            description='Types of competitions associated with the event'
+                                        ),
+                                        'dateFrom': openapi.Schema(
+                                            type=openapi.TYPE_STRING,
+                                            format=openapi.FORMAT_DATE,
+                                            description='Start date of the event'
+                                        ),
+                                        'dateTo': openapi.Schema(
+                                            type=openapi.TYPE_STRING,
+                                            format=openapi.FORMAT_DATE,
+                                            description='End date of the event'
+                                        ),
+                                        'status': openapi.Schema(
+                                            type=openapi.TYPE_STRING,
+                                            description='Status of the event'
+                                        ),
+                                    },
+                                    required=[
+                                        'id', 'name', 'organizer', 'competitionType',
+                                        'dateFrom', 'dateTo', 'status'
+                                    ]
+                                )
                             ),
                         },
-                        required=['id', 'name', 'organizer', 'competitionType', 'dateFrom', 'dateTo', 'status']
-                    ),
+                        required=['pagination', 'items_count', 'items']
+                    )
                 ),
                 401: openapi.Schema(
                     type=openapi.TYPE_OBJECT,
