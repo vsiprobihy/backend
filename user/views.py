@@ -81,6 +81,8 @@ class UserDistanceRegistrationsView(APIView):
         elif status_filter == 'archive':
             registrations = registrations.filter(distance__event__dateTo__lt=now().date())
 
+        registrations = registrations.order_by('id')
+
         paginator = Pagination()
         paginator.page_size = 4
 
@@ -257,6 +259,8 @@ class LikedEventsView(APIView):
     @swagger_auto_schema(**SwaggerDocs.LikedEventsView.get)
     def get(self, request):
         liked_events = EventLike.objects.get_liked_events(request.user)
+
+        liked_events = liked_events.order_by('id')
 
         paginator = Pagination()
         paginator.page_size = 4
