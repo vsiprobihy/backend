@@ -741,11 +741,12 @@ class SwaggerDocs:
                     },
                     required=['detail'],
                 ),
-                404: openapi.Schema(
+                401: openapi.Schema(
                     type=openapi.TYPE_OBJECT,
                     properties={
                         'detail': openapi.Schema(
-                            type=openapi.TYPE_STRING, description='Event not found.'
+                            type=openapi.TYPE_STRING,
+                            description='Authentication credentials were not provided.'
                         )
                     },
                     required=['detail'],
@@ -754,7 +755,28 @@ class SwaggerDocs:
                     type=openapi.TYPE_OBJECT,
                     properties={
                         'detail': openapi.Schema(
-                            type=openapi.TYPE_STRING, description='Event is not available for liking.'
+                            type=openapi.TYPE_STRING,
+                            description='You do not have permission to perform this action.'
+                        )
+                    },
+                    required=['detail'],
+                ),
+                404: openapi.Schema(
+                    type=openapi.TYPE_OBJECT,
+                    properties={
+                        'detail': openapi.Schema(
+                            type=openapi.TYPE_STRING,
+                            description='Organization not found.'
+                        )
+                    },
+                    required=['detail'],
+                ),
+                500: openapi.Schema(
+                    type=openapi.TYPE_OBJECT,
+                    properties={
+                        'detail': openapi.Schema(
+                            type=openapi.TYPE_STRING,
+                            description='An unexpected error occurred on the server.'
                         )
                     },
                     required=['detail'],
@@ -774,13 +796,45 @@ class SwaggerDocs:
                         )
                     },
                 ),
+                401: openapi.Schema(
+                    type=openapi.TYPE_OBJECT,
+                    properties={
+                        'detail': openapi.Schema(
+                            type=openapi.TYPE_STRING,
+                            description='Authentication credentials were not provided.'
+                        )
+                    },
+                    required=['detail'],
+                ),
+                403: openapi.Schema(
+                    type=openapi.TYPE_OBJECT,
+                    properties={
+                        'detail': openapi.Schema(
+                            type=openapi.TYPE_STRING,
+                            description='You do not have permission to perform this action.'
+                        )
+                    },
+                    required=['detail'],
+                ),
                 404: openapi.Schema(
                     type=openapi.TYPE_OBJECT,
                     properties={
-                        'error': openapi.Schema(
-                            type=openapi.TYPE_STRING, description='Event not found.'
+                        'detail': openapi.Schema(
+                            type=openapi.TYPE_STRING,
+                            description='Organization not found.'
                         )
                     },
+                    required=['detail'],
+                ),
+                500: openapi.Schema(
+                    type=openapi.TYPE_OBJECT,
+                    properties={
+                        'detail': openapi.Schema(
+                            type=openapi.TYPE_STRING,
+                            description='An unexpected error occurred on the server.'
+                        )
+                    },
+                    required=['detail'],
                 ),
             },
         }
@@ -814,8 +868,29 @@ class SwaggerDocs:
                                 type=openapi.TYPE_STRING, description='Event Name'
                             ),
                         },
+                        required=['id', 'name'],
                     ),
                     description='List of liked events.',
+                ),
+                401: openapi.Schema(
+                    type=openapi.TYPE_OBJECT,
+                    properties={
+                        'detail': openapi.Schema(
+                            type=openapi.TYPE_STRING,
+                            description='Authentication credentials were not provided.'
+                        )
+                    },
+                    required=['detail'],
+                ),
+                500: openapi.Schema(
+                    type=openapi.TYPE_OBJECT,
+                    properties={
+                        'detail': openapi.Schema(
+                            type=openapi.TYPE_STRING,
+                            description='An unexpected error occurred on the server.'
+                        )
+                    },
+                    required=['detail'],
                 ),
             },
         }
