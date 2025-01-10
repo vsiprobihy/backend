@@ -91,45 +91,89 @@ class SwaggerDocs:
                 200: openapi.Response(
                     description='List of user registrations',
                     schema=openapi.Schema(
-                        type=openapi.TYPE_ARRAY,
-                        items=openapi.Schema(
-                            type=openapi.TYPE_OBJECT,
-                            properties={
-                                'id': openapi.Schema(type=openapi.TYPE_INTEGER, description='Registration ID'),
-                                'registrationDate': openapi.Schema(
-                                    type=openapi.FORMAT_DATETIME, description='Date of registration'
-                                ),
-                                'distance': openapi.Schema(
+                        type=openapi.TYPE_OBJECT,
+                        properties={
+                            'pagination': openapi.Schema(
+                                type=openapi.TYPE_OBJECT,
+                                properties={
+                                    'next_page': openapi.Schema(type=openapi.TYPE_STRING, nullable=True),
+                                    'current_page': openapi.Schema(type=openapi.TYPE_INTEGER),
+                                    'previous_page': openapi.Schema(type=openapi.TYPE_STRING, nullable=True),
+                                    'num_pages': openapi.Schema(type=openapi.TYPE_INTEGER),
+                                },
+                                required=['current_page', 'num_pages'],
+                            ),
+                            'items_count': openapi.Schema(type=openapi.TYPE_INTEGER, description='Total item count'),
+                            'items': openapi.Schema(
+                                type=openapi.TYPE_ARRAY,
+                                items=openapi.Schema(
                                     type=openapi.TYPE_OBJECT,
                                     properties={
-                                        'id': openapi.Schema(type=openapi.TYPE_INTEGER, description='Distance ID'),
-                                        'name': openapi.Schema(type=openapi.TYPE_STRING, description='Distance name'),
-                                    },
-                                    required=['id', 'name'],
-                                ),
-                                'firstName': openapi.Schema(type=openapi.TYPE_STRING, description='First name'),
-                                'lastName': openapi.Schema(type=openapi.TYPE_STRING, description='Last name'),
-                                'email': openapi.Schema(type=openapi.TYPE_STRING, description='Email'),
-                                'promoCode': openapi.Schema(
-                                    type=openapi.TYPE_STRING, description='Applied promo code', nullable=True
-                                ),
-                                'additionalItems': openapi.Schema(
-                                    type=openapi.TYPE_ARRAY,
-                                    items=openapi.Schema(
-                                        type=openapi.TYPE_OBJECT,
-                                        properties={
-                                            'id': openapi.Schema(
-                                                type=openapi.TYPE_INTEGER, description='Additional item ID'
+                                        'id': openapi.Schema(type=openapi.TYPE_INTEGER, description='User ID'),
+                                        'registrationDate': openapi.Schema(
+                                            type=openapi.TYPE_STRING,
+                                            format='date-time',
+                                            description='Date of registration'
+                                        ),
+                                        'email': openapi.Schema(type=openapi.TYPE_STRING, description='Email'),
+                                        'firstName': openapi.Schema(type=openapi.TYPE_STRING, description='First name'),
+                                        'lastName': openapi.Schema(type=openapi.TYPE_STRING, description='Last name'),
+                                        'firstNameEng': openapi.Schema(
+                                            type=openapi.TYPE_STRING,
+                                            description='First name in English'
+                                        ),
+                                        'lastNameEng': openapi.Schema(
+                                            type=openapi.TYPE_STRING, description='Last name in English'
+                                        ),
+                                        'gender': openapi.Schema(
+                                            type=openapi.TYPE_STRING,
+                                            enum=['M', 'F'],
+                                            description='Gender'
+                                        ),
+                                        'dateOfBirth': openapi.Schema(
+                                            type=openapi.TYPE_STRING, format='date', description='Date of birth'
+                                        ),
+                                        'tShirtSize': openapi.Schema(
+                                            type=openapi.TYPE_STRING,
+                                            description='T-shirt size'
+                                        ),
+                                        'country': openapi.Schema(type=openapi.TYPE_STRING, description='Country'),
+                                        'city': openapi.Schema(type=openapi.TYPE_STRING, description='City'),
+                                        'phoneNumber': openapi.Schema(
+                                            type=openapi.TYPE_STRING,
+                                            description='Phone number'
+                                        ),
+                                        'sportsClub': openapi.Schema(
+                                            type=openapi.TYPE_STRING,
+                                            description='Sports club'
+                                        ),
+                                        'emergencyContactName': openapi.Schema(
+                                            type=openapi.TYPE_STRING, description='Emergency contact name'
+                                        ),
+                                        'emergencyContactPhone': openapi.Schema(
+                                            type=openapi.TYPE_STRING, description='Emergency contact phone'
+                                        ),
+                                        'promoCode': openapi.Schema(
+                                            type=openapi.TYPE_STRING, description='Promo code', nullable=True
+                                        ),
+                                        'additionalItems': openapi.Schema(
+                                            type=openapi.TYPE_ARRAY,
+                                            items=openapi.Schema(
+                                                type=openapi.TYPE_OBJECT,
+                                                properties={},
+                                                description='Additional items selected',
                                             ),
-                                        },
-                                        required=['id'],
-                                    ),
-                                    description='List of additional items selected',
-                                    nullable=True,
+                                        ),
+                                    },
+                                    required=[
+                                        'id', 'registrationDate', 'email', 'firstName', 'lastName',
+                                        'gender', 'dateOfBirth', 'tShirtSize', 'country', 'city',
+                                        'phoneNumber', 'emergencyContactName', 'emergencyContactPhone'
+                                    ],
                                 ),
-                            },
-                            required=['id', 'registrationDate', 'distance', 'firstName', 'lastName', 'email'],
-                        ),
+                            ),
+                        },
+                        required=['pagination', 'items_count', 'items'],
                     ),
                 ),
                 401: openapi.Response(
@@ -741,11 +785,12 @@ class SwaggerDocs:
                     },
                     required=['detail'],
                 ),
-                404: openapi.Schema(
+                401: openapi.Schema(
                     type=openapi.TYPE_OBJECT,
                     properties={
                         'detail': openapi.Schema(
-                            type=openapi.TYPE_STRING, description='Event not found.'
+                            type=openapi.TYPE_STRING,
+                            description='Authentication credentials were not provided.'
                         )
                     },
                     required=['detail'],
@@ -754,7 +799,28 @@ class SwaggerDocs:
                     type=openapi.TYPE_OBJECT,
                     properties={
                         'detail': openapi.Schema(
-                            type=openapi.TYPE_STRING, description='Event is not available for liking.'
+                            type=openapi.TYPE_STRING,
+                            description='You do not have permission to perform this action.'
+                        )
+                    },
+                    required=['detail'],
+                ),
+                404: openapi.Schema(
+                    type=openapi.TYPE_OBJECT,
+                    properties={
+                        'detail': openapi.Schema(
+                            type=openapi.TYPE_STRING,
+                            description='Organization not found.'
+                        )
+                    },
+                    required=['detail'],
+                ),
+                500: openapi.Schema(
+                    type=openapi.TYPE_OBJECT,
+                    properties={
+                        'detail': openapi.Schema(
+                            type=openapi.TYPE_STRING,
+                            description='An unexpected error occurred on the server.'
                         )
                     },
                     required=['detail'],
@@ -774,13 +840,45 @@ class SwaggerDocs:
                         )
                     },
                 ),
+                401: openapi.Schema(
+                    type=openapi.TYPE_OBJECT,
+                    properties={
+                        'detail': openapi.Schema(
+                            type=openapi.TYPE_STRING,
+                            description='Authentication credentials were not provided.'
+                        )
+                    },
+                    required=['detail'],
+                ),
+                403: openapi.Schema(
+                    type=openapi.TYPE_OBJECT,
+                    properties={
+                        'detail': openapi.Schema(
+                            type=openapi.TYPE_STRING,
+                            description='You do not have permission to perform this action.'
+                        )
+                    },
+                    required=['detail'],
+                ),
                 404: openapi.Schema(
                     type=openapi.TYPE_OBJECT,
                     properties={
-                        'error': openapi.Schema(
-                            type=openapi.TYPE_STRING, description='Event not found.'
+                        'detail': openapi.Schema(
+                            type=openapi.TYPE_STRING,
+                            description='Organization not found.'
                         )
                     },
+                    required=['detail'],
+                ),
+                500: openapi.Schema(
+                    type=openapi.TYPE_OBJECT,
+                    properties={
+                        'detail': openapi.Schema(
+                            type=openapi.TYPE_STRING,
+                            description='An unexpected error occurred on the server.'
+                        )
+                    },
+                    required=['detail'],
                 ),
             },
         }
@@ -814,8 +912,29 @@ class SwaggerDocs:
                                 type=openapi.TYPE_STRING, description='Event Name'
                             ),
                         },
+                        required=['id', 'name'],
                     ),
                     description='List of liked events.',
+                ),
+                401: openapi.Schema(
+                    type=openapi.TYPE_OBJECT,
+                    properties={
+                        'detail': openapi.Schema(
+                            type=openapi.TYPE_STRING,
+                            description='Authentication credentials were not provided.'
+                        )
+                    },
+                    required=['detail'],
+                ),
+                500: openapi.Schema(
+                    type=openapi.TYPE_OBJECT,
+                    properties={
+                        'detail': openapi.Schema(
+                            type=openapi.TYPE_STRING,
+                            description='An unexpected error occurred on the server.'
+                        )
+                    },
+                    required=['detail'],
                 ),
             },
         }
