@@ -886,7 +886,7 @@ class SwaggerDocs:
     class LikedEventsView:
         get = {
             'tags': ['Event Like'],
-            'operation_description': 'Retrieve a list of liked events',
+            'operation_description': 'Retrieve a list of liked events with pagination',
             'manual_parameters': [
                 openapi.Parameter(
                     'status',
@@ -896,25 +896,75 @@ class SwaggerDocs:
                     enum=['active', 'archive'],
                 ),
                 openapi.Parameter(
-                    'page', openapi.IN_QUERY, description='Page number for pagination', type=openapi.TYPE_STRING
+                    'page',
+                    openapi.IN_QUERY,
+                    description='Page number for pagination',
+                    type=openapi.TYPE_STRING
                 ),
             ],
             'responses': {
                 200: openapi.Schema(
-                    type=openapi.TYPE_ARRAY,
-                    items=openapi.Schema(
-                        type=openapi.TYPE_OBJECT,
-                        properties={
-                            'id': openapi.Schema(
-                                type=openapi.TYPE_INTEGER, description='Event ID'
+                    type=openapi.TYPE_OBJECT,
+                    properties={
+                        'pagination': openapi.Schema(
+                            type=openapi.TYPE_OBJECT,
+                            properties={
+                                'next_page': openapi.Schema(
+                                    type=openapi.TYPE_STRING,
+                                    nullable=True,
+                                    description='URL of the next page, or null if there are no more pages'
+                                ),
+                                'current_page': openapi.Schema(
+                                    type=openapi.TYPE_INTEGER,
+                                    description='Current page number'
+                                ),
+                                'previous_page': openapi.Schema(
+                                    type=openapi.TYPE_STRING,
+                                    nullable=True,
+                                    description='URL of the previous page, or null if on the first page'
+                                ),
+                                'num_pages': openapi.Schema(
+                                    type=openapi.TYPE_INTEGER,
+                                    description='Total number of pages'
+                                ),
+                            },
+                            required=['current_page', 'num_pages']
+                        ),
+                        'items_count': openapi.Schema(
+                            type=openapi.TYPE_INTEGER,
+                            description='Total number of items'
+                        ),
+                        'items': openapi.Schema(
+                            type=openapi.TYPE_ARRAY,
+                            items=openapi.Schema(
+                                type=openapi.TYPE_OBJECT,
+                                properties={
+                                    'id': openapi.Schema(
+                                        type=openapi.TYPE_INTEGER,
+                                        description='Event ID'
+                                    ),
+                                    'name': openapi.Schema(
+                                        type=openapi.TYPE_STRING,
+                                        description='Event Name'
+                                    ),
+                                    'dateFrom': openapi.Schema(
+                                        type=openapi.TYPE_STRING,
+                                        format='date',
+                                        description='Start date of the event'
+                                    ),
+                                    'dateTo': openapi.Schema(
+                                        type=openapi.TYPE_STRING,
+                                        format='date',
+                                        description='End date of the event'
+                                    ),
+                                },
+                                required=['id', 'name', 'dateFrom', 'dateTo']
                             ),
-                            'name': openapi.Schema(
-                                type=openapi.TYPE_STRING, description='Event Name'
-                            ),
-                        },
-                        required=['id', 'name'],
-                    ),
-                    description='List of liked events.',
+                            description='List of events'
+                        ),
+                    },
+                    required=['pagination', 'items_count', 'items'],
+                    description='Paginated list of liked events.',
                 ),
                 401: openapi.Schema(
                     type=openapi.TYPE_OBJECT,
