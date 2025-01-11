@@ -58,7 +58,7 @@ class SwaggerDocs:
                 required=[
                     'email', 'password', 'password2', 'firstName', 'lastName',
                     'phoneNumber', 'dateOfBirth', 'gender', 'country', 'city',
-                    'sportsClub', 'emergencyContactName', 'emergencyContactPhone'
+                    'emergencyContactName', 'emergencyContactPhone'
                 ],
             ),
             'responses': {
