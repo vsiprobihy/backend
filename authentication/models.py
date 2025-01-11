@@ -49,7 +49,7 @@ class BaseProfile(models.Model):
         validators=[validate_phone_number],
     )
 
-    sportsClub = models.CharField(max_length=100, null=False)
+    sportsClub = models.CharField(max_length=100, null=True)
 
     emergencyContactName = models.CharField(max_length=100, null=False)
     emergencyContactPhone = models.CharField(
