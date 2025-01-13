@@ -1,9 +1,5 @@
 from drf_yasg import openapi
 
-from authentication.serializers import (
-    RegisterSerializer,
-)
-
 
 class SwaggerDocs:
 
@@ -11,7 +7,60 @@ class SwaggerDocs:
         post = {
             'tags': ['Authentication'],
             'operation_description': 'Register user with email and password',
-            'request_body': RegisterSerializer,
+            'request_body': openapi.Schema(
+                type=openapi.TYPE_OBJECT,
+                properties={
+                    'email': openapi.Schema(
+                        type=openapi.TYPE_STRING, description='User email address'
+                    ),
+                    'password': openapi.Schema(
+                        type=openapi.TYPE_STRING, description='User password'
+                    ),
+                    'password2': openapi.Schema(
+                        type=openapi.TYPE_STRING, description='Password confirmation'
+                    ),
+                    'firstName': openapi.Schema(
+                        type=openapi.TYPE_STRING, description='First name'
+                    ),
+                    'lastName': openapi.Schema(
+                        type=openapi.TYPE_STRING, description='Last name'
+                    ),
+                    'phoneNumber': openapi.Schema(
+                        type=openapi.TYPE_STRING, description='Phone number'
+                    ),
+                    'dateOfBirth': openapi.Schema(
+                        type=openapi.TYPE_STRING, format='date', description='Date of birth (YYYY-MM-DD)'
+                    ),
+                    'gender': openapi.Schema(
+                        type=openapi.TYPE_STRING, enum=['M', 'F'], description='Gender (M for Male, F for Female)'
+                    ),
+                    'tShirtSize': openapi.Schema(
+                        type=openapi.TYPE_STRING,
+                        enum=['XXS', 'XS', 'S', 'M', 'L', 'XL', 'XXL', 'XXXL'],
+                        description='T-shirt size',
+                    ),
+                    'country': openapi.Schema(
+                        type=openapi.TYPE_STRING, description='Country'
+                    ),
+                    'city': openapi.Schema(
+                        type=openapi.TYPE_STRING, description='City'
+                    ),
+                    'sportsClub': openapi.Schema(
+                        type=openapi.TYPE_STRING, description='Sports club'
+                    ),
+                    'emergencyContactName': openapi.Schema(
+                        type=openapi.TYPE_STRING, description='Emergency contact name'
+                    ),
+                    'emergencyContactPhone': openapi.Schema(
+                        type=openapi.TYPE_STRING, description='Emergency contact phone number'
+                    ),
+                },
+                required=[
+                    'email', 'password', 'password2', 'firstName', 'lastName',
+                    'phoneNumber', 'dateOfBirth', 'gender', 'country', 'city',
+                    'emergencyContactName', 'emergencyContactPhone'
+                ],
+            ),
             'responses': {
                 200: openapi.Schema(
                     type=openapi.TYPE_OBJECT,
@@ -43,6 +92,7 @@ class SwaggerDocs:
                 ),
             },
         }
+
 
     class UserLogin:
         post = {

@@ -27,14 +27,14 @@ class BaseProfile(models.Model):
         ('XXXL', 'Very Extra Extra Large'),
     ]
 
-    firstName = models.CharField(max_length=50)
-    lastName = models.CharField(max_length=50)
+    firstName = models.CharField(max_length=50, null=False)
+    lastName = models.CharField(max_length=50, null=False)
 
     firstNameEng = models.CharField(max_length=50, null=False, blank=False)
     lastNameEng = models.CharField(max_length=50, null=False, blank=False)
 
     gender = models.CharField(max_length=10, choices=[('M', 'Male'), ('F', 'Female')], null=False)
-    dateOfBirth = models.DateField(null=False)
+    dateOfBirth = models.DateField(null=True, blank=True)
     tShirtSize = models.CharField(
         max_length=5, choices=T_SHIRT_SIZE_CHOICES, null=True
     )
@@ -49,7 +49,7 @@ class BaseProfile(models.Model):
         validators=[validate_phone_number],
     )
 
-    sportsClub = models.CharField(max_length=100, null=False)
+    sportsClub = models.CharField(max_length=100, null=True)
 
     emergencyContactName = models.CharField(max_length=100, null=False)
     emergencyContactPhone = models.CharField(
