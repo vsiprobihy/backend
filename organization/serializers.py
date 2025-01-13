@@ -59,7 +59,9 @@ class DistanceUserListSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = UserDistanceRegistration
-        fields = ['id', 'firstName', 'city', 'gender', 'dateOfBirth', 'sportsClub', 'distance', 'additionalItems']
+        fields = ['id', 'firstName', 'startingNumber', 'city', 'gender',
+                  'dateOfBirth', 'sportsClub', 'distance', 'additionalItems'
+                  ]
 
 
 class DistanceUserDetailSerializer(serializers.ModelSerializer):

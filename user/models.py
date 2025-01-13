@@ -36,8 +36,7 @@ class UserDistanceRegistration(models.Model):
     additionalItems = models.ManyToManyField(
         AdditionalItemEvent, blank=True, related_name='registrations'
     )
-    # TODO: Add startingNumber
-    # startingNumber
+    startingNumber = models.PositiveIntegerField(blank=True, default=0)
     firstName = models.CharField(max_length=50)
     lastName = models.CharField(max_length=50)
     firstNameEng = models.CharField(max_length=50, null=True, blank=True)
