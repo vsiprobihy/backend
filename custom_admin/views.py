@@ -1,6 +1,6 @@
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import status
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -109,7 +109,7 @@ class PendingEventsView(APIView):
 class CompetitionsTypeListCreateView(APIView):
     def get_permissions(self):
         if self.request.method == 'GET':
-            return [IsAuthenticated()]
+            return [AllowAny()]
         return [IsAdmin()]
 
     @swagger_auto_schema(**SwaggerDocs.CompetitionsTypeView.get)
@@ -141,7 +141,7 @@ class CompetitionsTypeListCreateView(APIView):
 class CompetitionsTypeDetailView(APIView):
     def get_permissions(self):
         if self.request.method == 'GET':
-            return [IsAuthenticated()]
+            return [AllowAny()]
         return [IsAdmin()]
 
     @swagger_auto_schema(**SwaggerDocs.CompetitionsTypeView.get)
